@@ -528,7 +528,8 @@ class _CustomerQuotationShowState extends State<CustomerQuotationShow> {
                                               _out_currency[0].codCurrency!,
                                           currencyName:
                                               _out_currency[0].strName!,
-                                          company: arrCompany[0]);
+                                          company: arrCompany[0],
+                                          cur: _out_currency[0]);
 
                                   Reports reports = new Reports();
                                   reports.reportsEnableds(dataquotation);

@@ -11,8 +11,10 @@ import 'package:appcotizaciones/src/models/delivery_type_model.dart';
 import 'package:appcotizaciones/src/models/indicators.dart';
 import 'package:appcotizaciones/src/models/payCondition.dart';
 import 'package:appcotizaciones/src/models/paymentMethod.dart';
+import 'package:appcotizaciones/src/models/sub_tipo_multimedia.dart';
 import 'package:appcotizaciones/src/models/tilist.dart';
 import 'package:appcotizaciones/src/models/tiperson.dart';
+import 'package:appcotizaciones/src/models/tipo_multimedia.dart';
 
 class Complements {
   List<TiPerson>? tiperson;
@@ -25,6 +27,8 @@ class Complements {
   List<DeliveryTime>? deliverytime;
   List<DeliveryType>? deliverytype;
   List<Ti_IndicatorsUser>? indicators;
+  List<TipoMultimedia>? tipomultimedia;
+  List<SubTipoMultimedia>? subtipomultimedia;
 
   Complements({
     this.tiperson,
@@ -37,6 +41,8 @@ class Complements {
     this.deliverytime,
     this.deliverytype,
     this.indicators,
+    this.tipomultimedia,
+    this.subtipomultimedia,
   });
 
   Complements copyWith({
@@ -50,6 +56,8 @@ class Complements {
     List<DeliveryTime>? deliverytime,
     List<DeliveryType>? deliverytype,
     List<Ti_IndicatorsUser>? indicators,
+    List<TipoMultimedia>? tipomultimedia,
+    List<SubTipoMultimedia>? subtipomultimedia,
   }) {
     return Complements(
       tiperson: tiperson ?? this.tiperson,
@@ -62,6 +70,8 @@ class Complements {
       deliverytime: deliverytime ?? this.deliverytime,
       deliverytype: deliverytype ?? this.deliverytype,
       indicators: indicators ?? this.indicators,
+      tipomultimedia: tipomultimedia ?? this.tipomultimedia,
+      subtipomultimedia: subtipomultimedia ?? this.subtipomultimedia,
     );
   }
 
@@ -69,40 +79,48 @@ class Complements {
     final result = <String, dynamic>{};
 
     if (tiperson != null) {
-      result.addAll({'tiperson': tiperson!.map((x) => x?.toMap()).toList()});
+      result.addAll({'tiperson': tiperson!.map((x) => x.toMap()).toList()});
     }
     if (tilist != null) {
-      result.addAll({'tilist': tilist!.map((x) => x?.toMap()).toList()});
+      result.addAll({'tilist': tilist!.map((x) => x.toMap()).toList()});
     }
     if (bank != null) {
-      result.addAll({'bank': bank!.map((x) => x?.toMap()).toList()});
+      result.addAll({'bank': bank!.map((x) => x.toMap()).toList()});
     }
     if (paycondition != null) {
       result.addAll(
-          {'paycondition': paycondition!.map((x) => x?.toMap()).toList()});
+          {'paycondition': paycondition!.map((x) => x.toMap()).toList()});
     }
     if (paymentmethod != null) {
       result.addAll(
-          {'paymentmethod': paymentmethod!.map((x) => x?.toMap()).toList()});
+          {'paymentmethod': paymentmethod!.map((x) => x.toMap()).toList()});
     }
     if (billingtype != null) {
-      result.addAll(
-          {'billingtype': billingtype!.map((x) => x?.toMap()).toList()});
+      result
+          .addAll({'billingtype': billingtype!.map((x) => x.toMap()).toList()});
     }
     if (currency != null) {
-      result.addAll({'currency': currency!.map((x) => x?.toMap()).toList()});
+      result.addAll({'currency': currency!.map((x) => x.toMap()).toList()});
     }
     if (deliverytime != null) {
       result.addAll(
-          {'deliverytime': deliverytime!.map((x) => x?.toMap()).toList()});
+          {'deliverytime': deliverytime!.map((x) => x.toMap()).toList()});
     }
     if (deliverytype != null) {
       result.addAll(
-          {'deliverytype': deliverytype!.map((x) => x?.toMap()).toList()});
+          {'deliverytype': deliverytype!.map((x) => x.toMap()).toList()});
     }
     if (indicators != null) {
-      result
-          .addAll({'indicators': indicators!.map((x) => x?.toMap()).toList()});
+      result.addAll({'indicators': indicators!.map((x) => x.toMap()).toList()});
+    }
+    if (tipomultimedia != null) {
+      result.addAll(
+          {'tipomultimedia': tipomultimedia!.map((x) => x.toMap()).toList()});
+    }
+    if (subtipomultimedia != null) {
+      result.addAll({
+        'subtipomultimedia': subtipomultimedia!.map((x) => x.toMap()).toList()
+      });
     }
 
     return result;
@@ -148,6 +166,14 @@ class Complements {
           ? List<Ti_IndicatorsUser>.from(
               map['indicators']?.map((x) => Ti_IndicatorsUser.fromMap(x)))
           : null,
+      tipomultimedia: map['tipomultimedia'] != null
+          ? List<TipoMultimedia>.from(
+              map['tipomultimedia']?.map((x) => TipoMultimedia.fromMap(x)))
+          : null,
+      subtipomultimedia: map['subtipomultimedia'] != null
+          ? List<SubTipoMultimedia>.from(map['subtipomultimedia']
+              ?.map((x) => SubTipoMultimedia.fromMap(x)))
+          : null,
     );
   }
 
@@ -158,7 +184,7 @@ class Complements {
 
   @override
   String toString() {
-    return 'Complements(tiperson: $tiperson, tilist: $tilist, bank: $bank, paycondition: $paycondition, paymentmethod: $paymentmethod, billingtype: $billingtype, currency: $currency, deliverytime: $deliverytime, deliverytype: $deliverytype, indicators: $indicators)';
+    return 'Complements(tiperson: $tiperson, tilist: $tilist, bank: $bank, paycondition: $paycondition, paymentmethod: $paymentmethod, billingtype: $billingtype, currency: $currency, deliverytime: $deliverytime, deliverytype: $deliverytype, indicators: $indicators, tipomultimedia: $tipomultimedia, subtipomultimedia: $subtipomultimedia)';
   }
 
   @override
@@ -175,7 +201,9 @@ class Complements {
         listEquals(other.currency, currency) &&
         listEquals(other.deliverytime, deliverytime) &&
         listEquals(other.deliverytype, deliverytype) &&
-        listEquals(other.indicators, indicators);
+        listEquals(other.indicators, indicators) &&
+        listEquals(other.tipomultimedia, tipomultimedia) &&
+        listEquals(other.subtipomultimedia, subtipomultimedia);
   }
 
   @override
@@ -189,6 +217,8 @@ class Complements {
         currency.hashCode ^
         deliverytime.hashCode ^
         deliverytype.hashCode ^
-        indicators.hashCode;
+        indicators.hashCode ^
+        tipomultimedia.hashCode ^
+        subtipomultimedia.hashCode;
   }
 }

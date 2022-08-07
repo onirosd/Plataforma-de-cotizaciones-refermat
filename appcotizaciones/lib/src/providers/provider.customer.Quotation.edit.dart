@@ -947,7 +947,8 @@ class _CustomerQuotationEditState extends State<CustomerQuotationEdit> {
                                     deliveryTimes2[0].description.toString(),
                                 currency: currency2[0].codCurrency!,
                                 currencyName: currency2[0].strName!,
-                                company: arrCompany[0]);
+                                company: arrCompany[0],
+                                cur: currency2[0]);
 
                         Reports reports = new Reports();
                         reports.reportsEnableds(dataquotation);
@@ -1119,7 +1120,8 @@ class _CustomerQuotationEditState extends State<CustomerQuotationEdit> {
                                     deliveryTimes2[0].description.toString(),
                                 currency: currency2[0].codCurrency!,
                                 currencyName: currency2[0].strName!,
-                                company: arrCompany[0]);
+                                company: arrCompany[0],
+                                cur: currency2[0]);
 
                         Reports reports = new Reports();
                         reports.reportsEnableds(dataquotation);

@@ -1,12 +1,16 @@
 import 'package:appcotizaciones/src/api/api.billing.dart';
 import 'package:appcotizaciones/src/api/api.complementsbillquo.dart';
+import 'package:appcotizaciones/src/api/api.complementscustogalle.dart';
 import 'package:appcotizaciones/src/api/api.configgeneral.dart';
 import 'package:appcotizaciones/src/api/api.customer.dart';
 import 'package:appcotizaciones/src/api/api.productoStock.dart';
 import 'package:appcotizaciones/src/api/api.quotation.dart';
+import 'package:appcotizaciones/src/api/api.upload_images.dart';
 import 'package:appcotizaciones/src/models/complementsBillQuo.dart';
+import 'package:appcotizaciones/src/models/complementsCustoGalle.dart';
 import 'package:appcotizaciones/src/models/confgeneral.dart';
 import 'package:appcotizaciones/src/models/customer.dart';
+import 'package:appcotizaciones/src/models/galleryExport.dart';
 import 'package:appcotizaciones/src/models/lastAutentication.dart';
 import 'package:appcotizaciones/src/models/quotationplusproducst.dart';
 import 'package:appcotizaciones/src/models/response_error.dart';
@@ -14,6 +18,8 @@ import 'package:appcotizaciones/src/modelscrud/api.complements.dart';
 import 'package:appcotizaciones/src/modelscrud/billing_crt.dart';
 import 'package:appcotizaciones/src/modelscrud/configGeneral_crt.dart';
 import 'package:appcotizaciones/src/modelscrud/customer_crt.dart';
+import 'package:appcotizaciones/src/modelscrud/gallery_crt.dart';
+import 'package:appcotizaciones/src/modelscrud/galleryexport_crt.dart';
 import 'package:appcotizaciones/src/modelscrud/lastAutentication_crud.dart';
 import 'package:appcotizaciones/src/modelscrud/quotation_crt.dart';
 import 'package:appcotizaciones/src/modelscrud/quotation_product_export.dart';
@@ -167,7 +173,7 @@ class ApiConfigGeneral {
 
       if (resp.error == 2) {
         for (var customer in customerData) {
-          customer.asyncFlag = 1;
+          customer.asyncFlag = 2;
           await crt_customer.updateCustomerOnebyOne(customer);
         }
       }
@@ -175,6 +181,55 @@ class ApiConfigGeneral {
       SyncLogCtr crt = new SyncLogCtr();
       await crt.saveLogtoUser(codUser, 'UploadClients', resp.description);
     }
+
+    return resp;
+  }
+
+  Future<ResponseError> executionRuleUploadGalleries(int codUser) async {
+    String description = "";
+    int error = 1;
+    int success = 0;
+    ResponseError resp0 =
+        new ResponseError(description: "", error: 0, success: 1);
+
+    ResponseError resp =
+        new ResponseError(description: "", error: 0, success: 1);
+    ConfigGeneralCtr crt = ConfigGeneralCtr();
+
+    ConfGeneral confiini =
+        await crt.getConfigGeneralforUserforRule("EnabledPreProc");
+    int enablepreproc = confiini.codconfigGeneral > 0 ? 1 : 0;
+
+    ComplementsCustomerGalleries api_gallery =
+        new ComplementsCustomerGalleries();
+    GalleryExport_crt crt_galleryexport = new GalleryExport_crt();
+    GalleryCtr crt_gallery = new GalleryCtr();
+    ApiUploadImages upd_images = new ApiUploadImages();
+
+    List<SelectGallerImages> data_images =
+        await crt_gallery.getGalleriesImages();
+
+    // Si tenemos galerias en estado  0  y que tienen imagenes entonces deberiamos comenzar con todo el proceso.
+    if (data_images.length > 0) {
+      resp0 = await upd_images.httpSend_Images_Galleries(data_images);
+      // Si comprobamos que efectivamente las imagenes fueron subidas con exito , solo asi deberiamos de poder  cargar el resto de la informacion
+      if (resp0.success == 1) {
+        List<GalleryExport> listgalleriesdata =
+            await crt_galleryexport.getDataGalleryExport_sync(enablepreproc);
+        resp = await api_gallery.uploadGalleriesExport(listgalleriesdata);
+
+        if (resp.error == 2) {
+          for (var list in listgalleriesdata) {
+            list.gallery.flatEstado = 2;
+            // print(await crt_gallery.updateGallery(list.gallery));
+          }
+        }
+      }
+    }
+
+    // Generamos el log de la sincronizacion
+    SyncLogCtr crt_sync = new SyncLogCtr();
+    await crt_sync.saveLogtoUser(codUser, 'UploadGalleries', resp.description);
 
     return resp;
   }
@@ -349,21 +404,6 @@ class ApiConfigGeneral {
       }
 
       if (validateInsert > 0) {
-        /*
-        await api.getAllCustomer().then((value) async {
-          if (value.length > 0) {
-            await cust.deleteAllCustomer();
-          }
-
-          for (Customer customer in value) {
-            //cust.createCustomer(customer);
-
-            countCustomer = await cust.createCustomer(customer) > 0
-                ? countCustomer + 1
-                : countCustomer + 0;
-          }
-        });   
-       */
         error = 0;
         success = 1;
         description = "Carga Clientes : Clientes sincronizados con exito. ";
@@ -372,6 +412,56 @@ class ApiConfigGeneral {
         description =
             "Carga Clientes : Se tuvo errores en la carga de clientes ";
       }
+    } else {
+      // resp = new ResponseError(
+      description = "Carga Clientes : No tenemos sincronizaciones pendientes.";
+      error = 0;
+      success = 1;
+    }
+
+    SyncLogCtr log = new SyncLogCtr();
+    await log.saveLogtoUser(codUser, 'UploadClients', description);
+
+    resp = new ResponseError(
+        description: description, error: error, success: success);
+
+    return resp;
+  }
+
+  Future<ResponseError> executionRuleLoadClientsGallery(
+      int codUser, int codempresa, int forzar) async {
+    //int numTablesClean = 0;
+    CustomerApiProvider api = new CustomerApiProvider();
+    ConfigGeneralCtr crt = ConfigGeneralCtr();
+    CustomerCtr cust = new CustomerCtr();
+    int countCustomer = 0;
+    String description = "";
+    int error = 1;
+    int success = 0;
+    ResponseError resp = new ResponseError(
+        description: description, error: error, success: success);
+
+    int validateInsert = 0;
+
+    ConfGeneral configuracion =
+        await crt.getConfigGeneralforUserforRule("LoadCustomer");
+
+    ComplementsCustomerGalleries crt1 = new ComplementsCustomerGalleries();
+
+    if (configuracion.codconfigGeneral > 0 || forzar == 1) {
+      // try {
+      List<ComplementsCustoGalle> ListaCustomerGaleries =
+          await crt1.uploadComplementsCustomerGalleries(codempresa);
+
+      if (ListaCustomerGaleries[0].customer.length > 0) {
+        await crt.deleteCustomerandGaleriesfinish();
+        resp =
+            await crt1.batchInsertComplementscustogalle(ListaCustomerGaleries);
+      }
+
+      description = resp.description;
+      error = resp.error;
+      success = resp.success;
     } else {
       // resp = new ResponseError(
       description = "Carga Clientes : No tenemos sincronizaciones pendientes.";

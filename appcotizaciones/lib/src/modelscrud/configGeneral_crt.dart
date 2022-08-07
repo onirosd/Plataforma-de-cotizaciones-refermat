@@ -41,6 +41,21 @@ class ConfigGeneralCtr {
     return res;
   }
 
+  Future<int> deleteCustomerandGaleriesfinish() async {
+    var dbAuth = await con.db;
+    //String cod = codUser.toString();
+    //String codConf = codConfig.toString();
+
+    final res = await dbAuth.rawQuery(
+        'DELETE FROM GalleryDetail WHERE codGallery NOT IN (SELECT codGallery FROM Gallery WHERE flatEstado IN (0))');
+    final res2 = await dbAuth
+        .rawQuery('DELETE FROM Gallery WHERE flatEstado NOT IN (0)');
+    final res3 = await dbAuth
+        .rawQuery('DELETE FROM Customer WHERE asyncFlag  NOT IN  (0)');
+
+    return 1;
+  }
+
   Future<int> deleteBillandQuotationwithoutdatanotfinish() async {
     var dbAuth = await con.db;
     //String cod = codUser.toString();

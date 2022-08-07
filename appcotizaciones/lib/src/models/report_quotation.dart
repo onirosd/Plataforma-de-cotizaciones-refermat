@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io' as io2;
 
+import 'package:appcotizaciones/src/models/currency.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:appcotizaciones/src/models/company.dart';
@@ -21,6 +22,7 @@ class ReportDataQuotation {
   String? currencyName;
   String path;
   Company company;
+  Currency cur;
 
   ReportDataQuotation({
     required this.codCompany,
@@ -35,6 +37,7 @@ class ReportDataQuotation {
     this.currencyName,
     required this.path,
     required this.company,
+    required this.cur,
   });
 
   ReportDataQuotation copyWith({
@@ -50,6 +53,7 @@ class ReportDataQuotation {
     String? currencyName,
     String? path,
     Company? company,
+    Currency? cur,
   }) {
     return ReportDataQuotation(
       codCompany: codCompany ?? this.codCompany,
@@ -64,6 +68,7 @@ class ReportDataQuotation {
       currencyName: currencyName ?? this.currencyName,
       path: path ?? this.path,
       company: company ?? this.company,
+      cur: cur ?? this.cur,
     );
   }
 
@@ -87,6 +92,7 @@ class ReportDataQuotation {
     }
     result.addAll({'path': path});
     result.addAll({'company': company.toMap()});
+    result.addAll({'cur': cur.toMap()});
 
     return result;
   }
@@ -106,6 +112,7 @@ class ReportDataQuotation {
       currencyName: map['currencyName'],
       path: map['path'] ?? '',
       company: Company.fromMap(map['company']),
+      cur: Currency.fromMap(map['cur']),
     );
   }
 
@@ -116,7 +123,7 @@ class ReportDataQuotation {
 
   @override
   String toString() {
-    return 'ReportDataQuotation(codCompany: $codCompany, quotationfin: $quotationfin, listprodquotationfin: $listprodquotationfin, customer: $customer, salesperson: $salesperson, paycondition: $paycondition, deliverytype: $deliverytype, deliverytime: $deliverytime, currency: $currency, currencyName: $currencyName, path: $path, company: $company)';
+    return 'ReportDataQuotation(codCompany: $codCompany, quotationfin: $quotationfin, listprodquotationfin: $listprodquotationfin, customer: $customer, salesperson: $salesperson, paycondition: $paycondition, deliverytype: $deliverytype, deliverytime: $deliverytime, currency: $currency, currencyName: $currencyName, path: $path, company: $company, cur: $cur)';
   }
 
   @override
@@ -135,7 +142,8 @@ class ReportDataQuotation {
         other.currency == currency &&
         other.currencyName == currencyName &&
         other.path == path &&
-        other.company == company;
+        other.company == company &&
+        other.cur == cur;
   }
 
   @override
@@ -151,6 +159,7 @@ class ReportDataQuotation {
         currency.hashCode ^
         currencyName.hashCode ^
         path.hashCode ^
-        company.hashCode;
+        company.hashCode ^
+        cur.hashCode;
   }
 }

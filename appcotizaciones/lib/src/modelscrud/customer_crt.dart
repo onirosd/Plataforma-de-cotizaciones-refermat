@@ -93,19 +93,27 @@ class CustomerCtr {
     api.uploadCustomers(customerData);
   }
 
+  Future<int> updateCustomerOnebyOneInd(Customer customer) async {
+    // Get a reference to the database.
+    final db = await con.db;
+    String asyncflag = customer.asyncFlag.toString();
+    String codCustomer = customer.codCustomer.toString();
+
+    // Update the given Dog.
+    return await db.rawUpdate(
+        "UPDATE Customer SET asyncFlag = $asyncflag WHERE codCustomer = '$codCustomer'");
+  }
+
   Future<int> updateCustomerOnebyOne(Customer customer) async {
     // Get a reference to the database.
     final db = await con.db;
-
+    String codCustomer = customer.codCustomer.toString();
     // Update the given Dog.
-    return await db.update(
-      'Customer',
-      customer.toMap(),
-      // Ensure that the Dog has a matching id.
-      where: "codCustomer = '?'",
-      // Pass the Dog's id as a whereArg to prevent SQL injection.
-      whereArgs: [customer.codCustomer],
-    );
+    return await db.update('Customer', customer.toMap(),
+        // Ensure that the Dog has a matching id.
+        where: "codCustomer = $codCustomer"
+        // Pass the Dog's id as a whereArg to prevent SQL injection.
+        );
   }
 
   Future<List<Customer>> getCustomernoSincronice() async {

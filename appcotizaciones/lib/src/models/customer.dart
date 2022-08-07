@@ -14,6 +14,9 @@ class Customer {
   String? latitude;
   String? longitude;
 
+  int? flagForceMultimedia;
+  int? flagTipoMultimedia;
+
   String? selectid;
 
   Customer({
@@ -29,6 +32,8 @@ class Customer {
     this.asyncFlag,
     this.latitude,
     this.longitude,
+    this.flagForceMultimedia,
+    this.flagTipoMultimedia,
   });
 
   Customer copyWith({
@@ -44,6 +49,8 @@ class Customer {
     int? asyncFlag,
     String? latitude,
     String? longitude,
+    int? flagForceMultimedia,
+    int? flagTipoMultimedia,
   }) {
     return Customer(
       codCustomer: codCustomer ?? this.codCustomer,
@@ -58,6 +65,8 @@ class Customer {
       asyncFlag: asyncFlag ?? this.asyncFlag,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
+      flagForceMultimedia: flagForceMultimedia ?? this.flagForceMultimedia,
+      flagTipoMultimedia: flagTipoMultimedia ?? this.flagTipoMultimedia,
     );
   }
 
@@ -100,6 +109,12 @@ class Customer {
     if (longitude != null) {
       result.addAll({'longitude': longitude});
     }
+    if (flagForceMultimedia != null) {
+      result.addAll({'flagForceMultimedia': flagForceMultimedia});
+    }
+    if (flagTipoMultimedia != null) {
+      result.addAll({'flagTipoMultimedia': flagTipoMultimedia});
+    }
 
     return result;
   }
@@ -118,6 +133,8 @@ class Customer {
       asyncFlag: map['asyncFlag']?.toInt(),
       latitude: map['latitude'],
       longitude: map['longitude'],
+      flagForceMultimedia: map['flagForceMultimedia']?.toInt(),
+      flagTipoMultimedia: map['flagTipoMultimedia']?.toInt(),
     );
   }
 
@@ -128,7 +145,7 @@ class Customer {
 
   @override
   String toString() {
-    return 'Customer(codCustomer: $codCustomer, numRucCustomer: $numRucCustomer, numRut: $numRut, strName: $strName, strCelphone: $strCelphone, strMail: $strMail, strAddress: $strAddress, codTiCustomer: $codTiCustomer, codCompany: $codCompany, asyncFlag: $asyncFlag, latitude: $latitude, longitude: $longitude)';
+    return 'Customer(codCustomer: $codCustomer, numRucCustomer: $numRucCustomer, numRut: $numRut, strName: $strName, strCelphone: $strCelphone, strMail: $strMail, strAddress: $strAddress, codTiCustomer: $codTiCustomer, codCompany: $codCompany, asyncFlag: $asyncFlag, latitude: $latitude, longitude: $longitude, flagForceMultimedia: $flagForceMultimedia, flagTipoMultimedia: $flagTipoMultimedia)';
   }
 
   @override
@@ -147,7 +164,9 @@ class Customer {
         other.codCompany == codCompany &&
         other.asyncFlag == asyncFlag &&
         other.latitude == latitude &&
-        other.longitude == longitude;
+        other.longitude == longitude &&
+        other.flagForceMultimedia == flagForceMultimedia &&
+        other.flagTipoMultimedia == flagTipoMultimedia;
   }
 
   @override
@@ -163,6 +182,8 @@ class Customer {
         codCompany.hashCode ^
         asyncFlag.hashCode ^
         latitude.hashCode ^
-        longitude.hashCode;
+        longitude.hashCode ^
+        flagForceMultimedia.hashCode ^
+        flagTipoMultimedia.hashCode;
   }
 }

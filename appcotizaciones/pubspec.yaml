@@ -44,6 +44,7 @@ dependencies:
   geocoding: ^2.0.4
   image_picker: ^0.8.5+3
   video_player: ^2.4.5
+  unique_identifier: ^0.2.2
 
  
 

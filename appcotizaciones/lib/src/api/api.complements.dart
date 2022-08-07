@@ -12,8 +12,10 @@ import 'package:appcotizaciones/src/models/indicators.dart';
 import 'package:appcotizaciones/src/models/payCondition.dart';
 import 'package:appcotizaciones/src/models/paymentMethod.dart';
 import 'package:appcotizaciones/src/models/response_error.dart';
+import 'package:appcotizaciones/src/models/sub_tipo_multimedia.dart';
 import 'package:appcotizaciones/src/models/tilist.dart';
 import 'package:appcotizaciones/src/models/tiperson.dart';
+import 'package:appcotizaciones/src/models/tipo_multimedia.dart';
 // / import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart';
@@ -100,6 +102,9 @@ class ComplementsApiProvider {
     List<DeliveryTime>? listdeliverytime = complements[0].deliverytime!;
     List<DeliveryType>? listdeliverytype = complements[0].deliverytype!;
     List<Ti_IndicatorsUser>? listindicators = complements[0].indicators!;
+    List<TipoMultimedia>? listtipomultimedia = complements[0].tipomultimedia!;
+    List<SubTipoMultimedia>? listsubtipomultimedia =
+        complements[0].subtipomultimedia!;
 
     String queryDelet = "";
 
@@ -182,8 +187,25 @@ class ComplementsApiProvider {
     listindicators.forEach((indicator) {
       batch.insert('Ti_IndicatorsUser', indicator.toMap());
     });
+
     queryDelet = queryDelet + " DELETE FROM Ti_IndicatorsUser;  ";
     // }
+
+    if (listtipomultimedia.length > 0) {
+      batch.delete('TipoMultimedia');
+      listtipomultimedia.forEach((tipomultimedia) {
+        batch.insert('TipoMultimedia', tipomultimedia.toMap());
+      });
+      queryDelet = queryDelet + " DELETE FROM TipoMultimedia;  ";
+    }
+
+    if (listsubtipomultimedia.length > 0) {
+      batch.delete('SubTipoMultimedia');
+      listsubtipomultimedia.forEach((subtipomultimedia) {
+        batch.insert('SubTipoMultimedia', subtipomultimedia.toMap());
+      });
+      queryDelet = queryDelet + " DELETE FROM SubTipoMultimedia;  ";
+    }
 
     //await batch.commit(noResult: true);
     try {

@@ -168,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Column(
                         children: [
                           //SizedBox(height: 10),
-                          Text('AppVentas 3.2',
+                          Text('AppVentas 3.3',
                               style: Theme.of(context).textTheme.headline4),
                           SizedBox(height: 30),
                           ChangeNotifierProvider(
@@ -481,10 +481,10 @@ class __LoginForm2State extends State<_LoginForm2> {
                                         authResult.codUser,
                                         0,
                                         authResult.codCompany.toString());
-                                /* rules 2 : Cargamos datos del cliente  */
+                                /* rules 2 : Cargamos datos del cliente y Galeria */
 
                                 ResponseError resp2 = await configgeneral
-                                    .executionRuleLoadClients(
+                                    .executionRuleLoadClientsGallery(
                                         authResult.codUser,
                                         authResult.codCompany,
                                         0);

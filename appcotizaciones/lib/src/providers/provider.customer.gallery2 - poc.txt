@@ -1,0 +1,349 @@
+import 'dart:convert';
+import 'dart:io' as i;
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+
+import 'package:appcotizaciones/src/api/api.upload_images.dart';
+
+class Providercustomergallery2 extends StatefulWidget {
+  Providercustomergallery2({Key? key}) : super(key: key);
+
+  @override
+  State<Providercustomergallery2> createState() =>
+      _Providercustomergallery2State();
+}
+
+class _Providercustomergallery2State extends State<Providercustomergallery2> {
+  final _space = SizedBox(height: 8);
+  final ImagePicker _picker = ImagePicker();
+  List<XFile>? _imageFileList;
+  List<i.File>? _imageListSend;
+  var _listItems = ['Foto', 'Adjuntar'];
+  String _item = 'Foto';
+  dynamic _pickImageError;
+  String _url = "No tenemos foto seleccionada ";
+  List<FIle_send> urls = [];
+
+  @override
+  State<Providercustomergallery2> createState() =>
+      _Providercustomergallery2State();
+
+  void _setImageFileListFromFile(XFile? value) {
+    _imageFileList = value == null ? null : <XFile>[value];
+  }
+
+  Future<void> _deleteCacheDir() async {
+    var tempDir = await getTemporaryDirectory();
+
+    if (tempDir.existsSync()) {
+      tempDir.deleteSync(recursive: true);
+    }
+  }
+
+  Future<void> _onImageButtonPressed(ImageSource source,
+      {BuildContext? context, bool isMultiImage = false}) async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: source,
+        // maxWidth: 50,
+        // maxHeight: 50,
+        imageQuality: 90,
+      );
+      setState(() {
+        _setImageFileListFromFile(pickedFile);
+        if (_imageFileList != null) {
+          _url = _imageFileList![0].path;
+          FIle_send filess = new FIle_send(path: _url);
+          urls.add(filess);
+
+          print(urls);
+        } else {
+          _url = 'No tenemos foto seleccionada ';
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _pickImageError = e;
+      });
+    }
+  }
+
+  // Widget _buildPopupDialog(BuildContext context) {
+  //   return new AlertDialog(
+  //     title: const Text('Popup example'),
+  //     content: new Column(
+  //       mainAxisSize: MainAxisSize.min,
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: <Widget>[
+  //         Text("Hello"),
+  //       ],
+  //     ),
+  //     actions: <Widget>[
+  //       new TextButton(
+  //         onPressed: () {
+  //           Navigator.of(context).pop();
+  //         },
+  //         //textColor: Theme.of(context).primaryColor,
+  //         child: const Text('Close'),
+  //       ),
+  //     ],
+  //   );
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(height: 50),
+            Row(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    var opcion = _item == 'Foto'
+                        ? ImageSource.camera
+                        : (_item == 'Adjuntar' ? ImageSource.gallery : null);
+
+                    _onImageButtonPressed(opcion!, context: context);
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('Seleccionar imagen'), // <-- Text
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Icon(
+                        // <-- Icon
+                        Icons.image,
+                        size: 24.0,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                ElevatedButton(
+                  onPressed: () async {
+                    await showDialog(
+                        context: context,
+                        builder: (_) => _imageDialog(_imageFileList));
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('Visualizar imagen'), // <-- Text
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Icon(
+                        // <-- Icon
+                        Icons.search,
+                        size: 24.0,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                ElevatedButton(
+                  onPressed: () async {
+                    ApiUploadImages upd = new ApiUploadImages();
+                    //i.File file_img = i.File(_imageFileList![0].path);
+                    //_imageListSend?.add(file_img);
+                    print(urls.length);
+
+                    upd.httpSend(urls);
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('Subir Imagen'), // <-- Text
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Icon(
+                        // <-- Icon
+                        Icons.upload,
+                        size: 24.0,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              // ListItems
+              children: [
+                DropdownButton(
+                  value: _item,
+                  items: _listItems.map((String items) {
+                    return DropdownMenuItem(
+                      value: items,
+                      child: Text(items),
+                    );
+                  }).toList(),
+                  icon: const Icon(Icons.keyboard_arrow_down),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _item = newValue!;
+                    });
+                  },
+                )
+              ],
+            ),
+
+            if (urls.isNotEmpty)
+              Container(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: 200, minHeight: 200),
+                  child: Scrollbar(
+                    // isAlwaysShown: true,
+                    child: ListView.separated(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: urls.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                flex: 6,
+                                child: Text(
+                                  urls[index]
+                                      .path
+                                      .toString()
+                                      .trimRight()
+                                      .trimLeft(),
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, index) => const Divider(
+                        height: 1.0,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+            // Row(
+            //   children: [Text(_url)],
+            // ),
+            Container(
+              color: Colors.amberAccent,
+              height: 400,
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await _deleteCacheDir();
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Limpiar Cache'), // <-- Text
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Icon(
+                    // <-- Icon
+                    Icons.clean_hands,
+                    size: 24.0,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _imageDialog extends StatelessWidget {
+  final List<XFile>? imageFileList;
+  const _imageDialog(this.imageFileList);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      actions: <Widget>[
+        new TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          //textColor: Theme.of(context).primaryColor,
+          child: const Text('Cerrar'),
+        ),
+      ],
+      content: Container(
+          width: 300,
+          height: 350,
+          child: imageFileList == null
+              ? Text("Sin imagen tomada")
+              : Image.file(i.File(imageFileList![0].path))),
+    );
+  }
+}
+
+class FIle_send {
+  String path;
+
+  FIle_send({
+    required this.path,
+  });
+
+  FIle_send copyWith({
+    String? path,
+  }) {
+    return FIle_send(
+      path: path ?? this.path,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    final result = <String, dynamic>{};
+
+    result.addAll({'path': path});
+
+    return result;
+  }
+
+  factory FIle_send.fromMap(Map<String, dynamic> map) {
+    return FIle_send(
+      path: map['path'] ?? '',
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory FIle_send.fromJson(String source) =>
+      FIle_send.fromMap(json.decode(source));
+
+  @override
+  String toString() => 'FIle_send(path: $path)';
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is FIle_send && other.path == path;
+  }
+
+  @override
+  int get hashCode => path.hashCode;
+}

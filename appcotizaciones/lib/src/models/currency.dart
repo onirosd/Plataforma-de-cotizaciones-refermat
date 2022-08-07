@@ -4,22 +4,26 @@ class Currency {
   int? codCurrency;
   String? strDescription;
   String? strName;
+  String? symbol;
 
   Currency({
     this.codCurrency,
     this.strDescription,
     this.strName,
+    this.symbol,
   });
 
   Currency copyWith({
     int? codCurrency,
     String? strDescription,
     String? strName,
+    String? symbol,
   }) {
     return Currency(
       codCurrency: codCurrency ?? this.codCurrency,
       strDescription: strDescription ?? this.strDescription,
       strName: strName ?? this.strName,
+      symbol: symbol ?? this.symbol,
     );
   }
 
@@ -35,6 +39,9 @@ class Currency {
     if (strName != null) {
       result.addAll({'strName': strName});
     }
+    if (symbol != null) {
+      result.addAll({'symbol': symbol});
+    }
 
     return result;
   }
@@ -44,6 +51,7 @@ class Currency {
       codCurrency: map['codCurrency']?.toInt(),
       strDescription: map['strDescription'],
       strName: map['strName'],
+      symbol: map['symbol'],
     );
   }
 
@@ -53,8 +61,9 @@ class Currency {
       Currency.fromMap(json.decode(source));
 
   @override
-  String toString() =>
-      'Currency(codCurrency: $codCurrency, strDescription: $strDescription, strName: $strName)';
+  String toString() {
+    return 'Currency(codCurrency: $codCurrency, strDescription: $strDescription, strName: $strName, symbol: $symbol)';
+  }
 
   @override
   bool operator ==(Object other) {
@@ -63,10 +72,15 @@ class Currency {
     return other is Currency &&
         other.codCurrency == codCurrency &&
         other.strDescription == strDescription &&
-        other.strName == strName;
+        other.strName == strName &&
+        other.symbol == symbol;
   }
 
   @override
-  int get hashCode =>
-      codCurrency.hashCode ^ strDescription.hashCode ^ strName.hashCode;
+  int get hashCode {
+    return codCurrency.hashCode ^
+        strDescription.hashCode ^
+        strName.hashCode ^
+        symbol.hashCode;
+  }
 }

@@ -211,13 +211,6 @@ class _ProviderHome extends State<ProviderHome> {
       _TotalPending = element.cantidad;
     });
 
-    //print(nombre);
-    //String? nombre =
-    //_dataPerson!.length > 0 ? _dataPerson![0].strDesPerson : "";
-    //String? celphone =
-    //  _dataPerson!.length > 0 ? _dataPerson![0].strCelphone : "";
-    // String? position =
-    //   _dataPerson!.length > 0 ? _dataPerson![0].strPosition : "";
     final ButtonStyle raisedButtonStyleSync = ElevatedButton.styleFrom(
         alignment: Alignment.center,
         onPrimary: Colors.white,
@@ -1112,6 +1105,10 @@ class _datosSincronizacion2 extends StatelessWidget {
                 print("subiendo nuevas cotizaciones si tenemos ");
                 ResponseError resp5 =
                     await configgeneral.executionRuleUploadQuotation(codUser);
+
+                print("subiendo nuevas galerias si tenemos ");
+                ResponseError resp8 =
+                    await configgeneral.executionRuleUploadGalleries(codUser);
 
                 print(" Actualizando lista de productos con su stock");
                 ResponseError resp6 =

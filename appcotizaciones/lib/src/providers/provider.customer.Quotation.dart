@@ -249,23 +249,6 @@ class _ListQuotation extends StatelessWidget {
   }
 }
 
-/*
-class _Row {
-  _Row(
-    this.valueA,
-    this.valueB,
-    this.valueC,
-    this.valueD,
-  );
-
-  String valueA;
-  String valueB;
-  String valueC;
-  int valueD;
-
-  bool selected = false;
-}
-*/
 class _DataSource extends DataTableSource {
   final List<SelectQuotation> listQuotations;
   final Customer customer;

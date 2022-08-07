@@ -104,11 +104,13 @@ class MyApp extends StatelessWidget {
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: [
         const Locale('en', 'US'),
         const Locale('es', 'ES'),
       ],
+      locale: Locale('es'),
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

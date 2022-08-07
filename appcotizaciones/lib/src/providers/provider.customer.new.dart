@@ -311,6 +311,8 @@ class _ProviderCustomerNew extends State<ProviderCustomerNew> {
                                         int.parse(_CodCompany);
                                     customer.latitude = latitude;
                                     customer.longitude = longitude;
+                                    customer.flagForceMultimedia = 0;
+                                    customer.flagTipoMultimedia = 0;
 
                                     final result = await customerProvider
                                         .insertCustomer(customer);

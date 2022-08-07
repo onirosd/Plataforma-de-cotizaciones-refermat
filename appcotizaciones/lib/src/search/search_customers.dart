@@ -98,13 +98,22 @@ class _CustomerItem extends StatelessWidget {
       title: Text(customer.strName!),
       subtitle: Text('Ruc : ' + customer.numRucCustomer.toString()),
       trailing: Wrap(
-        //spacing: 5, // space between two icons
+        spacing: -20, // space between two icons
         children: <Widget>[
           TextButton(
             onPressed: () => {
-              Navigator.pushNamedAndRemoveUntil(
-                  context, 'listQuotas', (route) => false,
-                  arguments: customer)
+              if (customer.flagForceMultimedia! == 1)
+                {
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, 'Gallery_customer', (route) => false,
+                      arguments: customer)
+                }
+              else
+                {
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, 'listQuotas', (route) => false,
+                      arguments: customer)
+                }
             },
             //color: Colors.orange,
             //padding: EdgeInsets.all(10.0),
@@ -114,7 +123,32 @@ class _CustomerItem extends StatelessWidget {
                 Icon(Icons.receipt_long),
                 Text(
                   "Cotización",
-                  style: TextStyle(fontSize: 10),
+                  style: TextStyle(fontSize: 9),
+                )
+              ],
+            ),
+          ),
+          TextButton(
+            onPressed: () => {
+              if (customer.flagForceMultimedia! == 1)
+                {
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, 'Gallery_customer', (route) => false,
+                      arguments: customer)
+                }
+              else
+                {
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, 'listBilling', (route) => false,
+                      arguments: customer)
+                }
+            },
+            child: Column(
+              children: <Widget>[
+                Icon(Icons.request_page_outlined),
+                Text(
+                  "Recibo",
+                  style: TextStyle(fontSize: 9),
                 )
               ],
             ),
@@ -122,18 +156,17 @@ class _CustomerItem extends StatelessWidget {
           TextButton(
             onPressed: () => {
               Navigator.pushNamedAndRemoveUntil(
-                  context, 'listBilling', (route) => false,
+                  context, 'Gallery_customer', (route) => false,
                   arguments: customer)
             },
-            //color: Colors.orange,
-            //padding: EdgeInsets.all(10.0),
             child: Column(
-              // Replace with a Row for horizontal icon + text
               children: <Widget>[
-                Icon(Icons.request_page_outlined),
+                Icon(
+                  Icons.image,
+                ),
                 Text(
-                  "Recibo",
-                  style: TextStyle(fontSize: 10),
+                  "Galeria",
+                  style: TextStyle(fontSize: 9),
                 )
               ],
             ),

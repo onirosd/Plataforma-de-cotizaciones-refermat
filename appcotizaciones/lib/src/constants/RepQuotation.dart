@@ -427,7 +427,8 @@ class Reports {
             graphics.clientSize.width, graphics.clientSize.height - 100),
         format: layoutFormat)!;
 
-    final icon_mod = rquotation.currency == 1 ? "\$" : "S/";
+    final icon_mod = rquotation.cur.symbol
+        .toString(); //rquotation.currency == 1 ? "\$" : "S/";
 
     print(rquotation.quotationfin.total.toString());
 
@@ -489,7 +490,7 @@ class Reports {
     }
 
     gridResult.page.graphics.drawString(
-        'Sub Total :                            $icon_mod $subtotal',
+        'Sub Total :                            $icon_mod$subtotal',
         PdfStandardFont(PdfFontFamily.helvetica, 14, style: PdfFontStyle.bold),
         brush: PdfSolidBrush(PdfColor(126, 155, 203)),
         bounds: Rect.fromLTWH(520, gridResult.bounds.bottom + advance, 0, 0));
@@ -522,7 +523,7 @@ class Reports {
     String num_igv = (double.parse(rquotation.company.numImpuesto!) * 100)
         .toStringAsFixed(0);
     gridResult.page.graphics.drawString(
-        'IGV. $num_igv% :                             $icon_mod $igv',
+        'IGV. $num_igv% :                             $icon_mod$igv',
         PdfStandardFont(PdfFontFamily.helvetica, 14, style: PdfFontStyle.bold),
         brush: PdfSolidBrush(PdfColor(126, 155, 203)),
         bounds: Rect.fromLTWH(520, gridResult.bounds.bottom + advance, 0, 0));
@@ -545,7 +546,7 @@ class Reports {
     }
 
     gridResult.page.graphics.drawString(
-        'Total :                                    $icon_mod $total',
+        'Total :                                    $icon_mod$total',
         PdfStandardFont(PdfFontFamily.helvetica, 14, style: PdfFontStyle.bold),
         brush: PdfSolidBrush(PdfColor(126, 155, 203)),
         bounds: Rect.fromLTWH(520, gridResult.bounds.bottom + advance, 0, 0));
@@ -1208,7 +1209,8 @@ class Reports {
             graphics.clientSize.width, graphics.clientSize.height - 100),
         format: layoutFormat)!;
 
-    final icon_mod = rquotation.currency == 1 ? "\$" : "S/";
+    final icon_mod = rquotation.cur.symbol
+        .toString(); //rquotation.currency == 1 ? "\$" : "S/";
 
     print(rquotation.quotationfin.total.toString());
 
@@ -1275,7 +1277,7 @@ class Reports {
     }
 
     gridResult.page.graphics.drawString(
-        'Sub Total :                            $icon_mod $subtotal',
+        'Sub Total :                            $icon_mod$subtotal',
         PdfStandardFont(PdfFontFamily.helvetica, 14, style: PdfFontStyle.bold),
         brush: PdfSolidBrush(PdfColor(126, 155, 203)),
         bounds: Rect.fromLTWH(520, gridResult.bounds.bottom + advance, 0, 0));
@@ -1308,7 +1310,7 @@ class Reports {
     String num_igv = (double.parse(rquotation.company.numImpuesto!) * 100)
         .toStringAsFixed(0);
     gridResult.page.graphics.drawString(
-        'IGV. $num_igv% :                             $icon_mod $igv',
+        'IGV. $num_igv% :                             $icon_mod$igv',
         PdfStandardFont(PdfFontFamily.helvetica, 14, style: PdfFontStyle.bold),
         brush: PdfSolidBrush(PdfColor(126, 155, 203)),
         bounds: Rect.fromLTWH(520, gridResult.bounds.bottom + advance, 0, 0));
@@ -1331,7 +1333,7 @@ class Reports {
     }
 
     gridResult.page.graphics.drawString(
-        'Total :                                    $icon_mod $total',
+        'Total :                                    $icon_mod$total',
         PdfStandardFont(PdfFontFamily.helvetica, 14, style: PdfFontStyle.bold),
         brush: PdfSolidBrush(PdfColor(126, 155, 203)),
         bounds: Rect.fromLTWH(520, gridResult.bounds.bottom + advance, 0, 0));
