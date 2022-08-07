@@ -23,7 +23,9 @@ class CustomerDB {
             codCompany,
             asyncFlag,
             latitude,
-            longitude
+            longitude,
+            flag_force_multimedia,
+            flag_tipo_multimedia
          )
          VALUES(
             :codCustomer,
@@ -36,7 +38,10 @@ class CustomerDB {
             :codCompany,
             :asyncFlag,
             :latitude,
-            :longitude
+            :longitude,
+            :flag_force_multimedia,
+            :flag_tipo_multimedia
+
          )
         ";
 
@@ -54,6 +59,8 @@ class CustomerDB {
                 'asyncFlag'  =>  $customer['asyncFlag'],
                 'latitude'  =>  (String) $customer['latitude'] ?? null,
                 'longitude'  =>  (String) $customer['longitude'] ?? null,
+                'flag_force_multimedia'  =>  (int) $customer['flagForceMultimedia'] ?? null,
+                'flag_tipo_multimedia'  =>  (int) $customer['flagTipoMultimedia'] ?? null,
             ));
             return $statement->rowCount();
         } catch (\PDOException $e) {

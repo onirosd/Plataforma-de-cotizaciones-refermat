@@ -72,6 +72,30 @@ if($constatus){
    
 
     // ";
+
+    $sql_tipo_multimedia = "
+    
+    select
+    a.cod_tipomultimedia codTipomultimedia,
+    a.des_tipomultimedia desTipomultimedia,
+    a.flag_adjuntar flagAdjuntar
+    from Tipo_multimedia a
+    where
+    a.cod_company = ".$company."
+
+    ";
+
+    $sql_sub_tipo_multimedia = "
+    
+    select
+    a.cod_subtipomultimedia codSubtipomultimedia,
+    a.cod_tipomultimedia codTipomultimedia,
+    a.des_subtipomultimedia desSubtipomultimedia
+    from Sub_tipo_multimedia a
+    where 
+    a.cod_company = ".$company."
+
+    ";
     
     $sql_person = "
     
@@ -139,7 +163,8 @@ if($constatus){
     select 
     a.cod_Currency codCurrency,
     a.str_Currency strDescription ,
-    a.str_Description strName
+    a.str_Description strName,
+    a.symbol symbol
     from Currency a
     where a.flg_async = 0 and
     a.cod_company = ".$company."
@@ -209,6 +234,31 @@ if($constatus){
     // }
     
     // }
+
+
+    $arr_tipo_multimedia = array();
+    foreach ($conn->query($sql_tipo_multimedia) as $row) {
+     $arr = array(); 
+     if(count($row) > 0){
+
+     $arr['codTipomultimedia'] = (int)$row['codTipomultimedia'];
+     $arr['desTipomultimedia'] = $row['desTipomultimedia'];
+     $arr['flagAdjuntar'] = (int)$row['flagAdjuntar'];
+     $arr_tipo_multimedia[] = $arr;
+     }
+    }
+
+    $arr_sub_tipo_multimedia = array();
+    foreach ($conn->query($sql_sub_tipo_multimedia) as $row) {
+     $arr = array(); 
+     if(count($row) > 0){
+
+     $arr['codSubtipomultimedia'] = (int)$row['codSubtipomultimedia'];
+     $arr['codTipomultimedia'] = (int)$row['codTipomultimedia'];
+     $arr['desSubtipomultimedia'] = $row['desSubtipomultimedia'];
+     $arr_sub_tipo_multimedia[] = $arr;
+     }
+    }
 
 
     $arr_person = array();
@@ -299,6 +349,7 @@ if($constatus){
      $arr['codCurrency'] = (int)$row['codCurrency'];
      $arr['strDescription']   =      $row['strDescription'];
      $arr['strName']   =      $row['strName'];
+     $arr['symbol']   =      $row['symbol'];
 
      $arr_currency[]       = $arr;
 
@@ -360,6 +411,8 @@ if($constatus){
     $master_class->deliverytype     = $arr_deliverytype;
     $master_class->deliverytime     = $arr_deliverytime;
     $master_class->indicators       = $arr_indicators;
+    $master_class->tipomultimedia  = $arr_tipo_multimedia;
+    $master_class->subtipomultimedia  = $arr_sub_tipo_multimedia;
 
     echo "[".json_encode($master_class)."]";
 
