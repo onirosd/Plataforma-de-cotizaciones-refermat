@@ -5,7 +5,6 @@ class Gallery {
   String codCustomer;
   int codUser;
   int tipoMultimedia;
-  int subTipoMultimedia;
   String? comentario;
   String? latitud;
   String? longitud;
@@ -17,7 +16,6 @@ class Gallery {
     required this.codCustomer,
     required this.codUser,
     required this.tipoMultimedia,
-    required this.subTipoMultimedia,
     this.comentario,
     this.latitud,
     this.longitud,
@@ -30,7 +28,6 @@ class Gallery {
     String? codCustomer,
     int? codUser,
     int? tipoMultimedia,
-    int? subTipoMultimedia,
     String? comentario,
     String? latitud,
     String? longitud,
@@ -42,7 +39,6 @@ class Gallery {
       codCustomer: codCustomer ?? this.codCustomer,
       codUser: codUser ?? this.codUser,
       tipoMultimedia: tipoMultimedia ?? this.tipoMultimedia,
-      subTipoMultimedia: subTipoMultimedia ?? this.subTipoMultimedia,
       comentario: comentario ?? this.comentario,
       latitud: latitud ?? this.latitud,
       longitud: longitud ?? this.longitud,
@@ -58,7 +54,6 @@ class Gallery {
     result.addAll({'codCustomer': codCustomer});
     result.addAll({'codUser': codUser});
     result.addAll({'tipoMultimedia': tipoMultimedia});
-    result.addAll({'subTipoMultimedia': subTipoMultimedia});
     if (comentario != null) {
       result.addAll({'comentario': comentario});
     }
@@ -78,9 +73,8 @@ class Gallery {
     return Gallery(
       codGallery: map['codGallery'] ?? '',
       codCustomer: map['codCustomer'] ?? '',
-      codUser: map['codUser'].toInt() ?? 0,
+      codUser: map['codUser']?.toInt() ?? 0,
       tipoMultimedia: map['tipoMultimedia']?.toInt() ?? 0,
-      subTipoMultimedia: map['subTipoMultimedia'].toInt() ?? 0,
       comentario: map['comentario'],
       latitud: map['latitud'],
       longitud: map['longitud'],
@@ -96,7 +90,7 @@ class Gallery {
 
   @override
   String toString() {
-    return 'Gallery(codGallery: $codGallery, codCustomer: $codCustomer, codUser: $codUser, tipoMultimedia: $tipoMultimedia, subTipoMultimedia: $subTipoMultimedia, comentario: $comentario, latitud: $latitud, longitud: $longitud, fechaCreacion: $fechaCreacion, flatEstado: $flatEstado)';
+    return 'Gallery(codGallery: $codGallery, codCustomer: $codCustomer, codUser: $codUser, tipoMultimedia: $tipoMultimedia, comentario: $comentario, latitud: $latitud, longitud: $longitud, fechaCreacion: $fechaCreacion, flatEstado: $flatEstado)';
   }
 
   @override
@@ -108,7 +102,6 @@ class Gallery {
         other.codCustomer == codCustomer &&
         other.codUser == codUser &&
         other.tipoMultimedia == tipoMultimedia &&
-        other.subTipoMultimedia == subTipoMultimedia &&
         other.comentario == comentario &&
         other.latitud == latitud &&
         other.longitud == longitud &&
@@ -122,7 +115,6 @@ class Gallery {
         codCustomer.hashCode ^
         codUser.hashCode ^
         tipoMultimedia.hashCode ^
-        subTipoMultimedia.hashCode ^
         comentario.hashCode ^
         latitud.hashCode ^
         longitud.hashCode ^

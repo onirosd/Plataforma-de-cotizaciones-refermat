@@ -149,40 +149,44 @@ class _ProviderCustomerNew extends State<ProviderCustomerNew> {
           isOnline: _isInternet,
         ),
         body: Center(
-          child: Padding(
+          child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Form(
               key: customerProvider.formKey,
               child: ListView(
+                shrinkWrap: true,
                 children: [
-                  const SizedBox(height: 30),
-                  TextFormField(
-                    decoration: InputDecoration(labelText: "Doc. Fiscal"),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
-                    ],
-                    keyboardType: TextInputType.number,
-                    validator: (ruc) {
-                      // final isDigitsOnly = int.tryParse(ruc!);
-                      // if (isDigitsOnly == null) {
-                      //   return 'Debes Ingresar solo numeros.';
-                      // } else {
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const SizedBox(height: 30),
+                      TextFormField(
+                        decoration: InputDecoration(labelText: "Doc. Fiscal"),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
+                        ],
+                        keyboardType: TextInputType.number,
+                        validator: (ruc) {
+                          // final isDigitsOnly = int.tryParse(ruc!);
+                          // if (isDigitsOnly == null) {
+                          //   return 'Debes Ingresar solo numeros.';
+                          // } else {
 
-                      //  CustomerCtr crt = new CustomerCtr();
-                      //  List<Customer> res =  crt.getCustomerByRUC(ruc, _CodCompany);
+                          //  CustomerCtr crt = new CustomerCtr();
+                          //  List<Customer> res =  crt.getCustomerByRUC(ruc, _CodCompany);
 
-                      // }
+                          // }
 
-                      final isDigitsOnly = int.tryParse(ruc!);
-                      return isDigitsOnly == null
-                          ? 'Debes Ingresar solo numeros.'
-                          : null;
-                    },
-                    onChanged: (value) {
-                      customer.numRucCustomer = value.toString();
-                    },
-                  ),
-                  /*const SizedBox(height: 10),
+                          final isDigitsOnly = int.tryParse(ruc!);
+                          return isDigitsOnly == null
+                              ? 'Debes Ingresar solo numeros.'
+                              : null;
+                        },
+                        onChanged: (value) {
+                          customer.numRucCustomer = value.toString();
+                        },
+                      ),
+                      /*const SizedBox(height: 10),
                   TextFormField(
                     decoration: InputDecoration(labelText: "Rut. Cliente"),
                     validator: (rut) => rut == null || rut == ''
@@ -192,188 +196,199 @@ class _ProviderCustomerNew extends State<ProviderCustomerNew> {
                       customer.numRut = value.toString();
                     },
                   ),*/
-                  const SizedBox(height: 10),
-                  TextFormField(
-                    decoration: InputDecoration(labelText: "Nombre"),
-                    validator: (name) => name == null || name == ''
-                        ? 'Este Campo no puede estar en blanco'
-                        : null,
-                    onChanged: (value) {
-                      customer.strName = value.toString();
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                  TextFormField(
-                    decoration: InputDecoration(labelText: "Telefono"),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
-                    ],
-                    keyboardType: TextInputType.number,
-                    validator: (ruc) {
-                      final isDigitsOnly = int.tryParse(ruc!);
-                      return isDigitsOnly == null
-                          ? 'Debes Ingresar solo numeros.'
-                          : null;
-                    },
-                    onChanged: (value) {
-                      customer.strCelphone = value.toString();
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                  TextFormField(
-                    decoration: InputDecoration(labelText: "Email"),
-                    validator: (email) => email == null || email == ''
-                        ? 'Este Campo no puede estar en blanco'
-                        : null,
-                    onChanged: (value) {
-                      customer.strMail = value.toString();
-                    },
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(labelText: "Dirección"),
-                    validator: (dir) => dir == null || dir == ''
-                        ? 'Este Campo no puede estar en blanco'
-                        : null,
-                    onChanged: (value) {
-                      customer.strAddress = value.toString();
-                    },
-                  ),
-                  const SizedBox(height: 50),
-                  OutlinedButton(
-                    style: raisedButtonStyle,
-                    // style: wi,
-                    onPressed: customerProvider.isLoading
-                        ? null
-                        : () async {
-                            print("Impresion de los clientes !!");
-                            print(customer);
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        decoration: InputDecoration(labelText: "Nombre"),
+                        validator: (name) => name == null || name == ''
+                            ? 'Este Campo no puede estar en blanco'
+                            : null,
+                        onChanged: (value) {
+                          customer.strName = value.toString();
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        decoration: InputDecoration(labelText: "Telefono"),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
+                        ],
+                        keyboardType: TextInputType.number,
+                        validator: (ruc) {
+                          final isDigitsOnly = int.tryParse(ruc!);
+                          return isDigitsOnly == null
+                              ? 'Debes Ingresar solo numeros.'
+                              : null;
+                        },
+                        onChanged: (value) {
+                          customer.strCelphone = value.toString();
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        decoration: InputDecoration(labelText: "Email"),
+                        validator: (email) => email == null || email == ''
+                            ? 'Este Campo no puede estar en blanco'
+                            : null,
+                        onChanged: (value) {
+                          customer.strMail = value.toString();
+                        },
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(labelText: "Dirección"),
+                        validator: (dir) => dir == null || dir == ''
+                            ? 'Este Campo no puede estar en blanco'
+                            : null,
+                        onChanged: (value) {
+                          customer.strAddress = value.toString();
+                        },
+                      ),
+                      const SizedBox(height: 50),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          OutlinedButton(
+                            style: raisedButtonStyle,
+                            // style: wi,
+                            onPressed: customerProvider.isLoading
+                                ? null
+                                : () async {
+                                    print("Impresion de los clientes !!");
+                                    print(customer);
 
-                            final msg_success = SnackBar(
-                                content: Text(
-                                    'El cliente fue registrado con exito ! '));
-                            final msg_wait = SnackBar(
-                                content: Text('Espere un momento....'));
-                            final msg_err = SnackBar(
-                                content: Text(
-                                    'Tuvimos un error en el registro !! , Intentelo de nuevo.'));
-
-                            final f = customerProvider.formKey;
-                            customerProvider.isLoading = true;
-                            FocusScope.of(context).unfocus();
-                            //final f = customerProvider.formKey;
-
-                            if (f != null) {
-                              final fcur = f.currentState;
-                              if (fcur != null) {
-                                if (fcur.validate()) {
-                                  CustomerCtr crt = new CustomerCtr();
-
-                                  List<Customer> listclientes =
-                                      await crt.getCustomerByRUC(
-                                          customer.numRucCustomer.toString(),
-                                          _CodCompany);
-
-                                  print(listclientes.length.toString() +
-                                      "---->" +
-                                      " cantidad clientes" +
-                                      " -->" +
-                                      customer.numRucCustomer.toString());
-
-                                  if (listclientes.length == 0) {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(msg_wait);
-                                    fcur.save();
-
-                                    String latitude = "";
-                                    String longitude = "";
-
-                                    try {
-                                      Position coordenadas =
-                                          await _getGeoLocationPosition();
-                                      latitude =
-                                          coordenadas.latitude.toString();
-                                      longitude =
-                                          coordenadas.longitude.toString();
-                                    } catch (e) {
-                                      print(
-                                          "Tenemos un error : " + e.toString());
-                                    }
-
-                                    //Random random = new Random();
-                                    //int randomNumber = random.nextInt(1000);
-                                    // customer.numRucCustomer =
-                                    //     customer.numRucCustomer.toString();
-                                    customer.codCustomer = _CodCompany +
-                                        customer.numRucCustomer.toString();
-                                    customer.numRut = '';
-                                    customer.asyncFlag = 0;
-                                    customer.codCompany =
-                                        int.parse(_CodCompany);
-                                    customer.latitude = latitude;
-                                    customer.longitude = longitude;
-                                    customer.flagForceMultimedia = 0;
-                                    customer.flagTipoMultimedia = 0;
-
-                                    final result = await customerProvider
-                                        .insertCustomer(customer);
-
-                                    try {
-                                      if (result > 0) {
-                                        await Future.delayed(
-                                            Duration(seconds: 2));
-                                        fcur.reset();
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(msg_success);
-                                      } else {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(msg_err);
-                                      }
-                                    } catch (error) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(msg_err);
-                                    }
-                                    customerProvider.isLoading = false;
-                                  } else {
+                                    final msg_success = SnackBar(
+                                        content: Text(
+                                            'El cliente fue registrado con exito ! '));
+                                    final msg_wait = SnackBar(
+                                        content: Text('Espere un momento....'));
                                     final msg_err = SnackBar(
                                         content: Text(
-                                            'Este RUC :  ${customer.numRucCustomer.toString()} ya existe en la BD.'));
-                                    customerProvider.isLoading = false;
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(msg_err);
-                                  }
-                                  //    await Future.delayed(Duration(seconds: 2));
-                                  // print(result);
-                                } else {
-                                  customerProvider.isLoading = false;
-                                }
-                              } else {
-                                customerProvider.isLoading = false;
-                              }
-                            } else {
-                              customerProvider.isLoading = false;
-                            }
-                          },
-                    child: Row(
-                      textBaseline: TextBaseline.ideographic,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        SizedBox(
-                          width: 30.0,
-                        ),
-                        Icon(
-                          Icons.person_add_alt_1,
-                          color: Colors.blue,
-                        ),
-                        SizedBox(
-                          width: 10.0,
-                        ),
-                        Text(
-                          'Agregar Cliente',
-                          style: TextStyle(fontSize: 15.0),
-                        ),
-                      ],
-                    ),
-                  ),
+                                            'Tuvimos un error en el registro !! , Intentelo de nuevo.'));
+
+                                    final f = customerProvider.formKey;
+                                    customerProvider.isLoading = true;
+                                    FocusScope.of(context).unfocus();
+                                    //final f = customerProvider.formKey;
+
+                                    if (f != null) {
+                                      final fcur = f.currentState;
+                                      if (fcur != null) {
+                                        if (fcur.validate()) {
+                                          CustomerCtr crt = new CustomerCtr();
+
+                                          List<Customer> listclientes =
+                                              await crt.getCustomerByRUC(
+                                                  customer.numRucCustomer
+                                                      .toString(),
+                                                  _CodCompany);
+
+                                          print(listclientes.length.toString() +
+                                              "---->" +
+                                              " cantidad clientes" +
+                                              " -->" +
+                                              customer.numRucCustomer
+                                                  .toString());
+
+                                          if (listclientes.length == 0) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(msg_wait);
+                                            fcur.save();
+
+                                            String latitude = "";
+                                            String longitude = "";
+
+                                            try {
+                                              Position coordenadas =
+                                                  await _getGeoLocationPosition();
+                                              latitude = coordenadas.latitude
+                                                  .toString();
+                                              longitude = coordenadas.longitude
+                                                  .toString();
+                                            } catch (e) {
+                                              print("Tenemos un error : " +
+                                                  e.toString());
+                                            }
+
+                                            //Random random = new Random();
+                                            //int randomNumber = random.nextInt(1000);
+                                            // customer.numRucCustomer =
+                                            //     customer.numRucCustomer.toString();
+                                            customer.codCustomer = _CodCompany +
+                                                customer.numRucCustomer
+                                                    .toString();
+                                            customer.numRut = '';
+                                            customer.asyncFlag = 0;
+                                            customer.codCompany =
+                                                int.parse(_CodCompany);
+                                            customer.latitude = latitude;
+                                            customer.longitude = longitude;
+                                            customer.flagForceMultimedia = 0;
+                                            customer.flagTipoMultimedia = 0;
+
+                                            final result =
+                                                await customerProvider
+                                                    .insertCustomer(customer);
+
+                                            try {
+                                              if (result > 0) {
+                                                await Future.delayed(
+                                                    Duration(seconds: 2));
+                                                fcur.reset();
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(msg_success);
+                                              } else {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(msg_err);
+                                              }
+                                            } catch (error) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(msg_err);
+                                            }
+                                            customerProvider.isLoading = false;
+                                          } else {
+                                            final msg_err = SnackBar(
+                                                content: Text(
+                                                    'Este RUC :  ${customer.numRucCustomer.toString()} ya existe en la BD.'));
+                                            customerProvider.isLoading = false;
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(msg_err);
+                                          }
+                                          //    await Future.delayed(Duration(seconds: 2));
+                                          // print(result);
+                                        } else {
+                                          customerProvider.isLoading = false;
+                                        }
+                                      } else {
+                                        customerProvider.isLoading = false;
+                                      }
+                                    } else {
+                                      customerProvider.isLoading = false;
+                                    }
+                                  },
+                            child: Row(
+                              textBaseline: TextBaseline.ideographic,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                SizedBox(
+                                  width: 30.0,
+                                ),
+                                Icon(
+                                  Icons.person_add_alt_1,
+                                  color: Colors.blue,
+                                ),
+                                SizedBox(
+                                  width: 10.0,
+                                ),
+                                Text(
+                                  'Agregar Cliente',
+                                  style: TextStyle(fontSize: 15.0),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  )
                 ],
               ),
             ),

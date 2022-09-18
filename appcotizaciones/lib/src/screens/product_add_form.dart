@@ -274,10 +274,11 @@ class _ProductAddFormState extends State<ProductAddForm> {
           : Builder(builder: (context) {
               var height = MediaQuery.of(context).size.height;
               var width = MediaQuery.of(context).size.width;
+              var percentage = 0.1;
 
               return Container(
-                height: height - 100,
-                width: width - 100,
+                height: height - height * percentage,
+                width: width - height * percentage,
                 child: SingleChildScrollView(
                   child: Form(
                     key: formKey,
@@ -285,7 +286,7 @@ class _ProductAddFormState extends State<ProductAddForm> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        regularText('SKU'),
+                        regularText('Elegir SKU'),
                         Autocomplete<ProductStock>(
                           displayStringForOption: _displayStringForOption,
                           optionsBuilder: (TextEditingValue textEditingValue) {
@@ -303,6 +304,46 @@ class _ProductAddFormState extends State<ProductAddForm> {
                                 option.codTiAlmacen ==
                                 int.parse(_selectalmacen));
                           },
+                          optionsViewBuilder: (context, onSelected, options) =>
+                              Align(
+                            alignment: Alignment.topLeft,
+                            child: Material(
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    bottom: Radius.circular(4.0)),
+                              ),
+                              child: Container(
+                                height: 52.0 * options.length,
+                                width: width - height * percentage,
+                                child: ListView.builder(
+                                  padding: EdgeInsets.only(top: 5),
+                                  itemCount: options.length,
+                                  shrinkWrap: false,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    final ProductStock option =
+                                        options.elementAt(index);
+                                    return InkWell(
+                                        onTap: () => onSelected(option),
+                                        child: Column(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      5, 5, 0, 8),
+                                              child: Text(option.strNameProduct
+                                                  .toLowerCase()),
+                                            ),
+                                            Divider(
+                                              color: Colors.black,
+                                            )
+                                          ],
+                                        ));
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
                           onSelected: (ProductStock selection) {
                             print(
                                 'You just  selected ${_displayStringForOption(selection)}');

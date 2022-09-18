@@ -1,13 +1,18 @@
 import 'dart:convert';
 import 'dart:io' as i;
+// import 'package:appcotizaciones/src/models/cusdart';
 import 'package:appcotizaciones/src/models/customer.dart';
 import 'package:appcotizaciones/src/models/galleriespluscustomer.dart';
 import 'package:appcotizaciones/src/models/gallery.dart';
 import 'package:appcotizaciones/src/models/galleryDetail.dart';
+import 'package:appcotizaciones/src/models/galleryDetailSubtipos.dart';
+import 'package:appcotizaciones/src/models/sub_tipo_multimedia.dart';
 import 'package:appcotizaciones/src/models/tipo_multimedia.dart';
 import 'package:appcotizaciones/src/modelscrud/customer_crt.dart';
 import 'package:appcotizaciones/src/modelscrud/gallery_crt.dart';
 import 'package:appcotizaciones/src/modelscrud/gallery_detail_crt.dart';
+import 'package:appcotizaciones/src/modelscrud/gallery_detail_subtipo_crt.dart';
+import 'package:appcotizaciones/src/modelscrud/subtipomultimedia_crt.dart';
 import 'package:appcotizaciones/src/modelscrud/tipomultimedia_crt.dart';
 import 'package:appcotizaciones/src/providers/changes.notifier.dart';
 import 'package:appcotizaciones/src/screens/multimedia_add_subtipo.dart';
@@ -42,12 +47,13 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
       codCustomer: '',
       codUser: 0,
       tipoMultimedia: 0,
-      subTipoMultimedia: 0,
+      // subTipoMultimedia: 0,
       flatEstado: 0,
       fechaCreacion: '');
 
   List<GalleryDetail> list_galleryDetail = [];
   List<TipoMultimedia> list_tipomultimedia = [];
+  List<SubTipoMultimedia> list_subtipomultimedia = [];
 
   Map _source = {ConnectivityResult.none: false};
   final MyConnectivity _connectivity = MyConnectivity.instance;
@@ -86,10 +92,12 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
       codCustomer: '',
       codUser: 0,
       tipoMultimedia: 0,
-      subTipoMultimedia: 0,
+      // subTipoMultimedia: 0,
       fechaCreacion: '',
       flatEstado: 0);
+
   List<GalleryDetail> _galeriadetail = [];
+  List<GalleryDetailSubtipos> _galeriadetailsubtipos = [];
 
   int _contador = 0;
 
@@ -100,10 +108,10 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
 
   void initState() {
     super.initState();
-
-    ListItems.sel_tipomultimedia = 0;
-    ListItems.sel_subtipomultimedia.comentario = '';
-    ListItems.sel_subtipomultimedia.subTipoMultimedia = 0;
+    ListItems.sel_subtipomultimedia.clear();
+    // ListItems.sel_tipomultimedia = 0;
+    // ListItems.sel_subtipomultimedia =  [];
+    // ListItems.sel_subtipomultimedia.subTipoMultimedia = 0;
 
     TipoMultimedia_crt crt = new TipoMultimedia_crt();
     setState(() {
@@ -262,6 +270,16 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
   Widget build(BuildContext context) {
     if (widget.dataedit.galleriesdetail == null) {
       _customer = ModalRoute.of(context)!.settings.arguments as Customer;
+
+      SubTipoMultimedia_crt crt1 = new SubTipoMultimedia_crt();
+      if (_customer.flagTipoMultimedia != 0) {
+        crt1
+            .getsubTipoMultimedia(_customer.flagTipoMultimedia.toString())
+            .then((value) {
+          list_subtipomultimedia = value;
+        });
+      }
+
       print(">> entrando correctamente");
       print(_customer);
     } else {
@@ -269,6 +287,15 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
       _customer = widget.dataedit.customer!;
       _galeria = widget.dataedit.gallery!;
       _galeriadetail = widget.dataedit.galleriesdetail!;
+      _galeriadetailsubtipos = widget.dataedit.galleriesdetailsubtipos!;
+
+      SubTipoMultimedia_crt crt1 = new SubTipoMultimedia_crt();
+      crt1
+          .getsubTipoMultimedia(
+              widget.dataedit.gallery!.tipoMultimedia.toString())
+          .then((value) {
+        list_subtipomultimedia = value;
+      });
       // final veremos = widget.dataedit.gallery!.codGallery;
     }
 
@@ -303,24 +330,50 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
               return Center(child: CircularProgressIndicator());
             } else {
               // Obtenemos los datos si es que vienen para modificar
+
               if (widget.dataedit.gallery != null && _contador == 0) {
                 ListItems.sel_tipomultimedia = _galeria.tipoMultimedia;
-                ListItems.sel_subtipomultimedia.comentario =
-                    _galeria.comentario;
-                ListItems.sel_subtipomultimedia.subTipoMultimedia =
-                    _galeria.subTipoMultimedia;
+                // ListItems.sel_subtipomultimedia.comentario =
+                //     _galeria.comentario;
+                // ListItems.sel_subtipomultimedia.subTipoMultimedia =
+                //     _galeria.subTipoMultimedia;
 
-                print(ListItems.sel_subtipomultimedia);
+                // print(ListItems.sel_subtipomultimedia);
 
                 for (var item in _galeriadetail) {
                   FIle_send filess = new FIle_send(path: item.pathImage);
                   urls.add(filess);
                 }
 
+                for (var items in _galeriadetailsubtipos) {
+                  ListItems.sel_subtipomultimedia.add(items);
+                }
+
+                List<TipoMultimedia> list_tipomultimedia_filtrado =
+                    list_tipomultimedia
+                        .where((o) =>
+                            o.codTipomultimedia ==
+                            widget.dataedit.gallery!.tipoMultimedia)
+                        .toList();
+
+                _flagadjuntar = list_tipomultimedia_filtrado[0].flagAdjuntar;
+
                 // int _input_codTipoMultimedia = _galeria.tipoMultimedia;
                 // String _input_codGallery = _galeria.codGallery;
                 // String _input_fecha_creacion = _galeria.fechaCreacion;
                 _contador++;
+              } else {
+                if (_customer.flagTipoMultimedia != 0) {
+                  List<TipoMultimedia> list_tipomultimedia_filtrado =
+                      list_tipomultimedia
+                          .where((o) =>
+                              o.codTipomultimedia ==
+                              _customer.flagTipoMultimedia)
+                          .toList();
+
+                  _flagadjuntar = list_tipomultimedia_filtrado[0].flagAdjuntar;
+                  ListItems.sel_tipomultimedia = _customer.flagTipoMultimedia!;
+                }
               }
 
               return AbsorbPointer(
@@ -426,10 +479,12 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
                                       decoration: InputDecoration(
                                           labelText: "Tipo Multimedia"),
                                       value: ListItems.sel_tipomultimedia == 0
-                                          ? (list_tipomultimedia.length > 0
-                                              ? list_tipomultimedia[0]
-                                                  .codTipomultimedia
-                                              : '0')
+                                          ? (_customer.flagTipoMultimedia != 0
+                                              ? _customer.flagTipoMultimedia
+                                              : (list_tipomultimedia.length > 0
+                                                  ? list_tipomultimedia[0]
+                                                      .codTipomultimedia
+                                                  : '0'))
                                           : ListItems.sel_tipomultimedia,
 
                                       items: list_tipomultimedia.map((emap) {
@@ -457,6 +512,12 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
 
                                       onChanged: (val) async {
                                         setState(() {});
+                                        SubTipoMultimedia_crt crt1 =
+                                            new SubTipoMultimedia_crt();
+
+                                        list_subtipomultimedia =
+                                            await crt1.getsubTipoMultimedia(
+                                                val.toString());
 
                                         List<TipoMultimedia>
                                             list_tipomultimedia_filtrado =
@@ -473,38 +534,165 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
                                         ListItems.sel_tipomultimedia =
                                             val as int;
 
-                                        ListItems.sel_subtipomultimedia
-                                            .comentario = '';
-                                        ListItems.sel_subtipomultimedia
-                                            .subTipoMultimedia = 0;
-
                                         urls.clear();
-
-                                        // print(val.toString() + '_________');
-
-                                        //  setState(() {
-                                        //   loginForm.company = val.toString();
-                                        //});
+                                        setState(() {
+                                          ListItems.sel_subtipomultimedia
+                                              .clear();
+                                        });
                                       },
                                     ),
+                                    const SizedBox(height: 8),
+                                    Container(
+                                        child: Text(
+                                          'Elegir Sub-tipo',
+                                          style: TextStyle(
+                                              color: Colors.grey[700]),
+                                        ),
+                                        alignment: Alignment.topLeft),
                                     popup(context),
 
-                                    TextFormField(
-                                      decoration: InputDecoration(
-                                        labelText: '',
-                                      ),
-                                      maxLines: 1,
-                                      validator: (val) {
-                                        if (ListItems.sel_subtipomultimedia
-                                                .subTipoMultimedia ==
-                                            0) {
-                                          return 'Seleccione un subtipo valido';
-                                        }
+                                    const SizedBox(height: 8),
+                                    // LIST PRODUCTS
+                                    if (ListItems
+                                            .sel_subtipomultimedia.isNotEmpty &&
+                                        ListItems.sel_subtipomultimedia.length >
+                                            0)
+                                      Container(
+                                        child: ConstrainedBox(
+                                          constraints: BoxConstraints(
+                                              maxHeight: 150, minHeight: 100),
+                                          child: Scrollbar(
+                                            // isAlwaysShown: true,
+                                            child: ListView.separated(
+                                              physics:
+                                                  AlwaysScrollableScrollPhysics(),
+                                              shrinkWrap: true,
+                                              itemCount: ListItems
+                                                  .sel_subtipomultimedia.length,
+                                              itemBuilder: (context, index) {
+                                                var subtipo = ListItems
+                                                    .sel_subtipomultimedia[
+                                                        index]
+                                                    .subTipoMultimedia
+                                                    .toString()
+                                                    .trimRight()
+                                                    .trimLeft();
 
-                                        return null;
-                                      },
+                                                var list_subtipo =
+                                                    list_subtipomultimedia
+                                                        .where((o) =>
+                                                            o.codSubtipomultimedia
+                                                                .toString() ==
+                                                            subtipo)
+                                                        .toList();
+                                                var sub_tipo = list_subtipo
+                                                            .length >
+                                                        0
+                                                    ? list_subtipo.first
+                                                        .desSubtipomultimedia
+                                                    : '';
+
+                                                return ListTile(
+                                                  title: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        flex: 7,
+                                                        child: Text(
+                                                          (index + 1)
+                                                                  .toString() +
+                                                              " : " +
+                                                              sub_tipo,
+                                                          style: TextStyle(
+                                                              fontSize: 12),
+                                                        ),
+                                                      ),
+                                                      // Expanded(
+                                                      //   flex: 1,
+                                                      //   child: Container(
+                                                      //     alignment: Alignment.topRight,
+                                                      //     child: Text(
+                                                      //       ListItems.listItems[index].sub_total
+                                                      //           .toString(),
+                                                      //       style: TextStyle(fontSize: 10),
+                                                      //       textAlign: TextAlign.right,
+                                                      //     ),
+                                                      //   ),
+                                                      // ),
+                                                    ],
+                                                  ),
+                                                  trailing: Wrap(
+                                                    spacing:
+                                                        12, // space between two icons
+                                                    children: <Widget>[
+                                                      IconButton(
+                                                        onPressed: () {
+                                                          // print("deleted");
+                                                          // var subTotal = double.tryParse(ListItems
+                                                          //     .listItems
+                                                          //     .elementAt(index)
+                                                          //     .sub_total);
+
+                                                          setState(() {
+                                                            ListItems
+                                                                .sel_subtipomultimedia
+                                                                .removeAt(
+                                                                    index);
+                                                          });
+
+                                                          // if (ListItems.listItems.length == 0) {
+                                                          //   _bloquearCurrency = 0;
+                                                          // }
+                                                        },
+                                                        icon: Icon(Icons
+                                                            .delete_outlined),
+                                                      ),
+                                                      // icon-2
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                              separatorBuilder:
+                                                  (context, index) =>
+                                                      const Divider(
+                                                height: 1.0,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    SizedBox(
+                                      height: 30.0,
+                                      child: TextFormField(
+                                        decoration: InputDecoration(
+                                          labelText: '',
+                                        ),
+                                        maxLines: 1,
+                                        validator: (val) {
+                                          if (ListItems.sel_subtipomultimedia
+                                                  .length ==
+                                              0) {
+                                            return 'Seleccione por lo menos un Subtipo';
+                                          }
+
+                                          return null;
+                                        },
+                                      ),
                                     ),
+
                                     const SizedBox(height: 10),
+
+                                    Container(
+                                        child: Text(
+                                          'Adjuntar Imagenes',
+                                          style: TextStyle(
+                                              color: Colors.grey[700]),
+                                        ),
+                                        alignment: Alignment.topLeft),
+                                    const SizedBox(height: 8),
                                     Row(
                                       children: [
                                         Expanded(
@@ -660,10 +848,14 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
                                                   setState(() => loader = true);
                                                   String latitude = '';
                                                   String longitude = '';
+
                                                   GalleryCtr crt1 =
                                                       new GalleryCtr();
                                                   GalleryDetailCtr crt2 =
                                                       new GalleryDetailCtr();
+
+                                                  GalleryDetailSubtipoCtr crt3 =
+                                                      new GalleryDetailSubtipoCtr();
 
                                                   try {
                                                     Position coordenadas =
@@ -691,15 +883,15 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
                                                               .gallery!
                                                               .codGallery;
 
-                                                  gallery_save
-                                                          .subTipoMultimedia =
-                                                      ListItems
-                                                          .sel_subtipomultimedia
-                                                          .subTipoMultimedia;
-                                                  gallery_save.comentario =
-                                                      ListItems
-                                                          .sel_subtipomultimedia
-                                                          .comentario;
+                                                  // gallery_save
+                                                  //         .subTipoMultimedia =
+                                                  //     ListItems
+                                                  //         .sel_subtipomultimedia
+                                                  //         .subTipoMultimedia;
+                                                  // gallery_save.comentario =
+                                                  //     ListItems
+                                                  //         .sel_subtipomultimedia
+                                                  //         .comentario;
                                                   gallery_save.tipoMultimedia =
                                                       ListItems
                                                           .sel_tipomultimedia;
@@ -762,10 +954,32 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
                                                                 input);
                                                       }
 
+                                                      if (widget.dataedit
+                                                              .gallery !=
+                                                          null) {
+                                                        await crt3
+                                                            .deleteGalleryDetailSubtiposforcodGallery(
+                                                                gallery_save
+                                                                    .codGallery);
+                                                      }
+
+                                                      for (var gallerydetailsubtipo
+                                                          in ListItems
+                                                              .sel_subtipomultimedia) {
+                                                        gallerydetailsubtipo
+                                                                .codGallery =
+                                                            identifier;
+
+                                                        await crt3
+                                                            .insertGalleryDetailSubtipos(
+                                                                gallerydetailsubtipo);
+                                                      }
+
                                                       // actualizamos el flag del cliente para que sea sincronizado
                                                       _customer.asyncFlag = 0;
                                                       _customer
                                                           .flagForceMultimedia = 0;
+
                                                       CustomerCtr crtcust =
                                                           new CustomerCtr();
                                                       await crtcust
@@ -978,12 +1192,14 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
                   // ListItems.sel_subtipomultimedia.tipoMultimedia = 0;
 
                   // _displayTextInputDialog;
+
                   showDialog(
                       context: context2,
                       builder: (context) {
                         return openDialogue();
                       }).then((value) {
                     if (value != null) {
+                      setState(() {});
                       if (ListItems.sel_tipomultimedia > 0) {
                         // _bloquearCurrency = 1;
                       }
@@ -993,7 +1209,7 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
           child: Align(
             alignment: Alignment.center,
             child: Text(
-              "Seleccionar SubTipo",
+              "Seleccionar Motivo SubTipo",
               textAlign: TextAlign.left,
               style: TextStyle(
                 color: Color.fromARGB(255, 255, 255, 255),

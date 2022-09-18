@@ -1145,25 +1145,10 @@ class _datosSincronizacion2 extends StatelessWidget {
 
                 // sca.currentState!.showSnackBar(
                 //     SnackBar(content: Text(msg), duration: Duration.,);
-
-                // sca
-                //     .of(mainContext)
-                //     .showSnackBar();
-
                 Navigator.pushNamed(mainContext, "home");
 
                 //resp = await com.syncComplementsfromApi(
                 ///   codUser, 'Sync-general');
-
-                // if (resp.error == 1) {
-                //   ScaffoldMessenger.of(context).showSnackBar(
-                //       SnackBar(content: Text(resp.description)));
-                // } else {
-                //   ScaffoldMessenger.of(context).showSnackBar(
-                //       SnackBar(content: Text(resp.description)));
-                //   Navigator.pushNamed(context, "home");
-                // }
-                //Navigator.pushNamed(context, "home");
               },
         child: Text(isInternet
             ? loginForm.isLoading

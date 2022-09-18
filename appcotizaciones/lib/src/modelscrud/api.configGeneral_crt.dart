@@ -221,7 +221,7 @@ class ApiConfigGeneral {
         if (resp.error == 2) {
           for (var list in listgalleriesdata) {
             list.gallery.flatEstado = 2;
-            // print(await crt_gallery.updateGallery(list.gallery));
+            await crt_gallery.updateGallery(list.gallery);
           }
         }
       }

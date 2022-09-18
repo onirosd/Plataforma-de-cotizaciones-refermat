@@ -38,12 +38,22 @@ class CustomerSearchDelegate extends SearchDelegate {
 
   Widget _emptyContainer() {
     return Container(
-      child: Center(
-        child: Icon(
-          Icons.movie_creation_outlined,
-          color: Colors.black38,
-          size: 130,
-        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Center(
+            child: Icon(
+              Icons.person_search_outlined,
+              color: Colors.black38,
+              size: 130,
+            ),
+          ),
+          Center(
+            child: Text("Buscar Cliente ..",
+                style: TextStyle(color: Colors.black38)),
+          )
+        ],
       ),
     );
   }

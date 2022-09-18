@@ -8,7 +8,7 @@
 $return["success"] = 1;
 $return["msg"] = "";
 
-$directorio_principal = 'dirimagenes/';
+$directorio_principal = $_SERVER['DOCUMENT_ROOT']. '\AppStock/dirimagenes/';
 
 try {
 $conteo = 0;
@@ -23,14 +23,16 @@ foreach ($_POST as $key => $value)
         // $f = base64_decode($value->encoded);
         // file_put_contents("dirimagenes/".$fn, $f);
 
-        if (!file_exists($directorio_principal.$sub_directorio)) {
-            mkdir($directorio_principal.$sub_directorio, 0777, true);
-        }
+
+        // CREAMOS DIRECTORIO POR CLIENTE - NO ES CONVENIENTE
+        // if (!file_exists($directorio_principal.$sub_directorio)) {
+        //     mkdir($directorio_principal.$sub_directorio, 0777, true);
+        // }
   
         $name      = $value2->fileName; 
         
         $base64_string = $value2->encoded;
-        $outputfile = $directorio_principal.$sub_directorio."/".$name;
+        $outputfile = $directorio_principal.$name;
         $filehandler = fopen($outputfile, 'wb' ); 
         fwrite($filehandler, base64_decode($base64_string));
         fclose($filehandler); 

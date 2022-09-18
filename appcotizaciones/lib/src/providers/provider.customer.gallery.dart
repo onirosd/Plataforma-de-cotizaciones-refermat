@@ -2,8 +2,10 @@ import 'package:appcotizaciones/src/models/customer.dart';
 import 'package:appcotizaciones/src/models/galleriespluscustomer.dart';
 import 'package:appcotizaciones/src/models/gallery.dart';
 import 'package:appcotizaciones/src/models/galleryDetail.dart';
+import 'package:appcotizaciones/src/models/galleryDetailSubtipos.dart';
 import 'package:appcotizaciones/src/modelscrud/gallery_crt.dart';
 import 'package:appcotizaciones/src/modelscrud/gallery_detail_crt.dart';
+import 'package:appcotizaciones/src/modelscrud/gallery_detail_subtipo_crt.dart';
 import 'package:appcotizaciones/src/modelscrud/quotation_crt.dart';
 import 'package:appcotizaciones/src/providers/changes.notifier.dart';
 import 'package:appcotizaciones/src/search/search_customers.dart';
@@ -277,10 +279,10 @@ class MyData extends DataTableSource {
               Icons.cloud_off_sharp,
               color: Colors.red,
             )
-          : (listGallery[index].flatEstado == 1
+          : (listGallery[index].flatEstado == 2
               ? Icon(
-                  Icons.cloud_off_sharp,
-                  color: Colors.red,
+                  Icons.cloud_done_outlined,
+                  color: Colors.green,
                 )
               : Icon(
                   Icons.cloud_done_outlined,
@@ -300,6 +302,8 @@ class MyData extends DataTableSource {
                   onPressed: () async {
                     GalleryCtr crt = new GalleryCtr();
                     GalleryDetailCtr crt1 = new GalleryDetailCtr();
+                    GalleryDetailSubtipoCtr crtt2 =
+                        new GalleryDetailSubtipoCtr();
 
                     List<Gallery> gallery1 = await crt
                         .getGallery(listGallery[index].codGallery.toString());
@@ -308,12 +312,17 @@ class MyData extends DataTableSource {
                         await crt1.getGalleryDetail(
                             listGallery[index].codGallery.toString());
 
+                    List<GalleryDetailSubtipos> gallerydetailsubtipos =
+                        await crtt2.getGalleryDetailSubtipos(
+                            listGallery[index].codGallery.toString());
+
                     // List<Authentication> dataSalesPerson =
                     //     await crt3.getDataUserAutentication(data[0].userId!);
                     GalleriesplusCustomer data = new GalleriesplusCustomer(
                         customer: _customer2,
                         gallery: gallery1.first,
-                        galleriesdetail: gallerydetail);
+                        galleriesdetail: gallerydetail,
+                        galleriesdetailsubtipos: gallerydetailsubtipos);
 
                     Navigator.pushNamedAndRemoveUntil(
                         context, 'CustomerGalleryEdit', (route) => false,

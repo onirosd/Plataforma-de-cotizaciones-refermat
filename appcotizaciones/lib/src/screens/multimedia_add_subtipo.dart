@@ -1,6 +1,7 @@
 import 'dart:ffi';
 import 'dart:math';
 
+import 'package:appcotizaciones/src/models/galleryDetailSubtipos.dart';
 import 'package:appcotizaciones/src/models/product_stock.dart';
 import 'package:appcotizaciones/src/models/sub_tipo_multimedia.dart';
 import 'package:appcotizaciones/src/models/tialmacen.dart';
@@ -18,6 +19,7 @@ import 'package:appcotizaciones/src/models/quotation_product_model.dart';
 import 'package:appcotizaciones/src/utils/constants.dart';
 import 'package:appcotizaciones/src/utils/size_config.dart';
 import 'package:appcotizaciones/src/widgets/widgets.dart';
+import 'package:intl/intl.dart';
 
 //import 'package:flutter_application_1/utils/constants.dart';
 //import 'package:flutter_application_1/utils/size_config.dart';
@@ -57,11 +59,12 @@ class _MultimediaaddsubtState extends State<Multimediaaddsubt> {
     super.initState();
     getsubTipoMultimedia();
 
-    setState(() {
-      // _sub_tipo_multimedia = ListItems.sel_tipomultimedia;
-      comentariocontroller.text =
-          ListItems.sel_subtipomultimedia.comentario.toString();
-    });
+    // setState(() {
+    //   // _sub_tipo_multimedia = ListItems.sel_tipomultimedia;
+    //   comentariocontroller.text =
+    //       ListItems.sel_subtipomultimedia.comentario.toString();
+    // });
+
     print(ListItems.sel_subtipomultimedia);
   }
 
@@ -83,13 +86,16 @@ class _MultimediaaddsubtState extends State<Multimediaaddsubt> {
       setState(() {
         subtipo1_list = ressubtipomult;
         if (subtipo1_list.length == 0) {
-          ListItems.sel_subtipomultimedia.subTipoMultimedia = -9;
+          // ListItems.sel_subtipomultimedia.subTipoMultimedia = -9;
           Navigator.pop(context, true);
         }
-        _sub_tipo_multimedia =
-            ListItems.sel_subtipomultimedia.subTipoMultimedia == 0
-                ? subtipo1_list[0].codSubtipomultimedia
-                : ListItems.sel_subtipomultimedia.subTipoMultimedia;
+
+        _sub_tipo_multimedia = subtipo1_list[0].codSubtipomultimedia;
+
+        // _sub_tipo_multimedia =
+        //     ListItems.sel_subtipomultimedia.subTipoMultimedia == 0
+        //         ? subtipo1_list[0].codSubtipomultimedia
+        //         : ListItems.sel_subtipomultimedia.subTipoMultimedia;
         loading = false;
       });
     } catch (err) {
@@ -316,11 +322,22 @@ class _MultimediaaddsubtState extends State<Multimediaaddsubt> {
         });
         //List<String> split =  selectedProducts.strNameProduct.toString().split("Stock");
         setState(() {
-          ListItems.sel_subtipomultimedia.comentario =
-              comentariocontroller.text;
+          final correlativo = DateTime.now().microsecondsSinceEpoch.toString();
 
-          ListItems.sel_subtipomultimedia.subTipoMultimedia =
-              _sub_tipo_multimedia;
+          GalleryDetailSubtipos nuevo_valor = new GalleryDetailSubtipos(
+              codGallerySubtipo: correlativo,
+              subTipoMultimedia: _sub_tipo_multimedia,
+              comentario: comentariocontroller.text,
+              fechaCreacion: DateFormat("yy-MM-dd").format(DateTime.now()),
+              codGallery: '');
+
+          ListItems.sel_subtipomultimedia.add(nuevo_valor);
+          print(ListItems.sel_subtipomultimedia);
+          // ListItems.sel_subtipomultimedia.comentario =
+          //     comentariocontroller.text;
+
+          // ListItems.sel_subtipomultimedia.subTipoMultimedia =
+          //     _sub_tipo_multimedia;
 
           // print(ListItems.sel_subtipomultimedia);
 

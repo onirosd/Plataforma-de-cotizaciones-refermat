@@ -29,6 +29,9 @@ class GalleryDetailDB {
         ";
 
         try {
+            
+            $http = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https://' : 'http://';
+            $directorio_principal = $http.$_SERVER['SERVER_NAME']. '/AppStock/dirimagenes/';
             $statement = $this->db->prepare($statement);
             $statement->execute(array(
 
@@ -36,7 +39,7 @@ class GalleryDetailDB {
             'codImage' => (String)$gallerydetail['codImage'],
             'nameImage' => (String)$gallerydetail['nameImage'],
             'fechaCreacion' => (String)$gallerydetail['fechaCreacion'],
-            'pathImage' => (String)$gallerydetail['pathImage']
+            'pathImage' => (String)$directorio_principal.$gallerydetail['nameImage'] //(String)$gallerydetail['pathImage'] veremo
             
             ));
             

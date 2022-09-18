@@ -4,6 +4,7 @@ import 'package:appcotizaciones/src/models/complementsCustoGalle.dart';
 import 'package:appcotizaciones/src/models/customer.dart';
 import 'package:appcotizaciones/src/models/gallery.dart';
 import 'package:appcotizaciones/src/models/galleryDetail.dart';
+import 'package:appcotizaciones/src/models/galleryDetailSubtipos.dart';
 import 'package:appcotizaciones/src/models/galleryExport.dart';
 import 'package:appcotizaciones/src/models/response_error.dart';
 import 'package:http/http.dart' as http;
@@ -57,6 +58,8 @@ class ComplementsCustomerGalleries {
     List<Customer>? listCustomer = complements[0].customer;
     List<Gallery>? listGallery = complements[0].gallery;
     List<GalleryDetail>? listGalleryDetail = complements[0].galleryDetail;
+    List<GalleryDetailSubtipos>? listGalleryDetailSubtipos =
+        complements[0].galleriesdetailsubtipos;
 
     if (listCustomer.length > 0) {
       listCustomer.forEach((customer) {
@@ -77,6 +80,13 @@ class ComplementsCustomerGalleries {
       // batch.delete('Billing'); //('Company', company.toMap());
       listGalleryDetail.forEach((gallerydetail) {
         batch.insert('GalleryDetail', gallerydetail.toMap());
+      });
+    }
+
+    if (listGalleryDetailSubtipos.length > 0) {
+      // batch.delete('Billing'); //('Company', company.toMap());
+      listGalleryDetailSubtipos.forEach((gallerydetailsubtipos) {
+        batch.insert('GalleryDetailSubtipos', gallerydetailsubtipos.toMap());
       });
     }
     // queryDelet = queryDelet + " DELETE FROM Company;  ";

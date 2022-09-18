@@ -75,7 +75,6 @@ if($constatus){
      ,A.[codCustomer] AS codCustomer
      ,[codUser] AS codUser
      ,[tipoMultimedia] AS tipoMultimedia
-     ,[subTipoMultimedia] AS subTipoMultimedia
      ,[comentario] comentario
      ,[latitud] latitud
      ,[longitud] longitud
@@ -99,6 +98,18 @@ if($constatus){
       INNER JOIN Customer c on c.cod_Customer = b.codCustomer
      where c.cod_Company = ".$empresa;
 
+     $sql_gallery_detail_subtipos = "
+     SELECT 
+	  a.subTipoMultimedia,
+	  a.comentario,
+	  a.fechaCreacion,
+	  a.codGallery,
+	  a.codGallerySubtipo
+      FROM [dbo].[GalleryDetailSubtipos] a
+      INNER JOIN  [dbo].[Gallery] b on a.codGallery = b.codGallery
+      INNER JOIN Customer c on c.cod_Customer = b.codCustomer
+	  where c.cod_Company = ".$empresa;
+
 
      
     $comprobacion = 0;
@@ -106,6 +117,7 @@ if($constatus){
     $arr_customer  = array();
     $arr_galllery  = array();
     $arr_galleryDetail  = array();
+    $arr_galleryDetailSubtipos = array();
 
     foreach ($conn->query($sql) as $row) {
      $arr = array(); 
@@ -149,7 +161,7 @@ if($constatus){
       $arr['codCustomer'] = (String)$row['codCustomer'];
       $arr['codUser'] = (int)$row['codUser'];
       $arr['tipoMultimedia'] = (int)$row['tipoMultimedia'];
-      $arr['subTipoMultimedia'] = (int)$row['subTipoMultimedia'];
+      // $arr['subTipoMultimedia'] = (int)$row['subTipoMultimedia'];
       $arr['comentario'] = (String)$row['comentario'];
       $arr['latitud'] = (String)$row['latitud'];
       $arr['longitud'] = (String)$row['longitud'];
@@ -171,11 +183,12 @@ if($constatus){
     
          $arr['codGallery'] = (String)$row['codGallery'];
          $arr['codImage'] = (String)$row['codImage'];
-         $arr['nameImage'] = (int)$row['nameImage'];
-         $arr['latitud'] = (int)$row['latitud'];
-         $arr['longitud'] = (int)$row['longitud'];
-         $arr['fechaCreacion'] = (String)$row['fechaCreacion'];
+         $arr['nameImage'] = (String)$row['nameImage'];
          $arr['pathImage'] = (String)$row['pathImage'];
+         $arr['latitud'] = (String)$row['latitud'];
+         $arr['longitud'] = (String)$row['longitud'];
+         $arr['fechaCreacion'] = (String)$row['fechaCreacion'];
+         
     
          $arr_galleryDetail[] = $arr;
     
@@ -185,9 +198,30 @@ if($constatus){
          }
 
 
+         foreach ($conn->query($sql_gallery_detail_subtipos) as $row) {
+            $arr = array(); 
+       
+            if(count($row) > 0){
+            
+            $arr['codGallerySubtipo'] = (String)$row['codGallerySubtipo'];
+            $arr['subTipoMultimedia'] = (int)$row['subTipoMultimedia'];
+            $arr['comentario'] = (String)$row['comentario'];
+            $arr['fechaCreacion'] = (String)$row['fechaCreacion'];
+            $arr['codGallery'] = (String)$row['codGallery'];
+            
+       
+            $arr_galleryDetailSubtipos[] = $arr;
+       
+            }
+           
+       
+            }
+
+
          $master_class->customer            = $arr_customer;
          $master_class->gallery             = $arr_galllery;
          $master_class->galleryDetail       = $arr_galleryDetail;
+         $master_class->galleriesdetailsubtipos = $arr_galleryDetailSubtipos;
       
          echo "[".json_encode($master_class)."]";
    //   echo json_encode($arr_customer); 

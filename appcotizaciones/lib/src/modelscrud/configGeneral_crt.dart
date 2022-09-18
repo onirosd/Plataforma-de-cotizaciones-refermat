@@ -46,6 +46,8 @@ class ConfigGeneralCtr {
     //String cod = codUser.toString();
     //String codConf = codConfig.toString();
 
+    final res0 = await dbAuth.rawQuery(
+        'DELETE FROM GalleryDetailSubtipos WHERE codGallery NOT IN (SELECT codGallery FROM Gallery WHERE flatEstado IN (0))');
     final res = await dbAuth.rawQuery(
         'DELETE FROM GalleryDetail WHERE codGallery NOT IN (SELECT codGallery FROM Gallery WHERE flatEstado IN (0))');
     final res2 = await dbAuth

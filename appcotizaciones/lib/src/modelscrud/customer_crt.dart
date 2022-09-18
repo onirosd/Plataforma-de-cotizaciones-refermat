@@ -97,11 +97,12 @@ class CustomerCtr {
     // Get a reference to the database.
     final db = await con.db;
     String asyncflag = customer.asyncFlag.toString();
+    String flagforcemultimedia = customer.flagForceMultimedia.toString();
     String codCustomer = customer.codCustomer.toString();
 
     // Update the given Dog.
     return await db.rawUpdate(
-        "UPDATE Customer SET asyncFlag = $asyncflag WHERE codCustomer = '$codCustomer'");
+        "UPDATE Customer SET asyncFlag = $asyncflag , flagForceMultimedia = $flagforcemultimedia WHERE codCustomer = '$codCustomer'");
   }
 
   Future<int> updateCustomerOnebyOne(Customer customer) async {

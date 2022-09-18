@@ -5,27 +5,33 @@ import 'package:flutter/foundation.dart';
 import 'package:appcotizaciones/src/models/customer.dart';
 import 'package:appcotizaciones/src/models/gallery.dart';
 import 'package:appcotizaciones/src/models/galleryDetail.dart';
+import 'package:appcotizaciones/src/models/galleryDetailSubtipos.dart';
 
 class GalleriesplusCustomer {
   Customer? customer;
   Gallery? gallery;
   List<GalleryDetail>? galleriesdetail;
+  List<GalleryDetailSubtipos>? galleriesdetailsubtipos;
 
   GalleriesplusCustomer({
     this.customer,
     this.gallery,
     this.galleriesdetail,
+    this.galleriesdetailsubtipos,
   });
 
   GalleriesplusCustomer copyWith({
     Customer? customer,
     Gallery? gallery,
     List<GalleryDetail>? galleriesdetail,
+    List<GalleryDetailSubtipos>? galleriesdetailsubtipos,
   }) {
     return GalleriesplusCustomer(
       customer: customer ?? this.customer,
       gallery: gallery ?? this.gallery,
       galleriesdetail: galleriesdetail ?? this.galleriesdetail,
+      galleriesdetailsubtipos:
+          galleriesdetailsubtipos ?? this.galleriesdetailsubtipos,
     );
   }
 
@@ -39,8 +45,15 @@ class GalleriesplusCustomer {
       result.addAll({'gallery': gallery!.toMap()});
     }
     if (galleriesdetail != null) {
-      result.addAll(
-          {'galleriesdetail': galleriesdetail!.map((x) => x.toMap()).toList()});
+      result.addAll({
+        'galleriesdetail': galleriesdetail!.map((x) => x?.toMap()).toList()
+      });
+    }
+    if (galleriesdetailsubtipos != null) {
+      result.addAll({
+        'galleriesdetailsubtipos':
+            galleriesdetailsubtipos!.map((x) => x?.toMap()).toList()
+      });
     }
 
     return result;
@@ -55,6 +68,10 @@ class GalleriesplusCustomer {
           ? List<GalleryDetail>.from(
               map['galleriesdetail']?.map((x) => GalleryDetail.fromMap(x)))
           : null,
+      galleriesdetailsubtipos: map['galleriesdetailsubtipos'] != null
+          ? List<GalleryDetailSubtipos>.from(map['galleriesdetailsubtipos']
+              ?.map((x) => GalleryDetailSubtipos.fromMap(x)))
+          : null,
     );
   }
 
@@ -64,8 +81,9 @@ class GalleriesplusCustomer {
       GalleriesplusCustomer.fromMap(json.decode(source));
 
   @override
-  String toString() =>
-      'GalleriesplusCustomer(customer: $customer, gallery: $gallery, galleriesdetail: $galleriesdetail)';
+  String toString() {
+    return 'GalleriesplusCustomer(customer: $customer, gallery: $gallery, galleriesdetail: $galleriesdetail, galleriesdetailsubtipos: $galleriesdetailsubtipos)';
+  }
 
   @override
   bool operator ==(Object other) {
@@ -74,10 +92,15 @@ class GalleriesplusCustomer {
     return other is GalleriesplusCustomer &&
         other.customer == customer &&
         other.gallery == gallery &&
-        listEquals(other.galleriesdetail, galleriesdetail);
+        listEquals(other.galleriesdetail, galleriesdetail) &&
+        listEquals(other.galleriesdetailsubtipos, galleriesdetailsubtipos);
   }
 
   @override
-  int get hashCode =>
-      customer.hashCode ^ gallery.hashCode ^ galleriesdetail.hashCode;
+  int get hashCode {
+    return customer.hashCode ^
+        gallery.hashCode ^
+        galleriesdetail.hashCode ^
+        galleriesdetailsubtipos.hashCode;
+  }
 }

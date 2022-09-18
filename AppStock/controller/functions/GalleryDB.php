@@ -17,7 +17,6 @@ class GalleryDB {
             ,codCustomer
             ,codUser
             ,tipoMultimedia
-            ,subTipoMultimedia
             ,comentario
             ,latitud
             ,longitud
@@ -30,7 +29,6 @@ class GalleryDB {
             :codCustomer,
             :codUser,
             :tipoMultimedia,
-            :subTipoMultimedia,
             :comentario,
             :latitud,
             :longitud,
@@ -47,7 +45,6 @@ class GalleryDB {
             'codCustomer' => (String)$gallery['codCustomer'],
             'codUser' => (int)$gallery['codUser'],
             'tipoMultimedia' => (int)$gallery['tipoMultimedia'],
-            'subTipoMultimedia' => (int)$gallery['subTipoMultimedia'],
             'comentario' => (String)$gallery['comentario'],
             'latitud' => (String)$gallery['latitud'],
             'longitud' => (String)$gallery['longitud'],

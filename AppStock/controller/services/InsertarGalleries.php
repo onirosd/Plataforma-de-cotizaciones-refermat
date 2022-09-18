@@ -11,6 +11,7 @@ include '../../config/config.php';
 //require_once ( 'config/connections/sqlconnect.php');
 include '../functions/GalleryDB.php';
 include '../functions/GalleryDetailDB.php';
+include '../functions/GalleryDetailSubtiposDB.php';
 require '../../config/connections/sqlconnect.php';
 
  $errordescription = '';
@@ -58,6 +59,7 @@ try {
 
     $gallerydb = new GalleryDB($conn);
     $galleryDetaildb = new GalleryDetailDB($conn);
+    $galleryDetailSubtiposdb = new GalleryDetailSubtiposDB($conn);
 
     foreach ($decoded_params as $key => $value) {
         $dato = (array) json_decode($value);
@@ -66,9 +68,14 @@ try {
         foreach ($dato['galleryDetail'] as $key => $value) {
 
             $arreglo = (array)$value;
-            // print_r($arreglo);
-
             $galleryDetaildb->insert($arreglo); 
+            
+        }
+
+        foreach ($dato['galleriesdetailsubtipos'] as $key => $value2) {
+
+            $arreglo2 = (array)$value2;
+            $galleryDetailSubtiposdb->insert($arreglo2); 
             
         }
 

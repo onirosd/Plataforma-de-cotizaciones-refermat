@@ -168,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Column(
                         children: [
                           //SizedBox(height: 10),
-                          Text('AppVentas 3.3',
+                          Text('AppVentas 3.4',
                               style: Theme.of(context).textTheme.headline4),
                           SizedBox(height: 30),
                           ChangeNotifierProvider(
