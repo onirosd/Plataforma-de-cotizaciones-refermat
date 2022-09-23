@@ -112,7 +112,7 @@ class CustomerCtr {
     // Update the given Dog.
     return await db.update('Customer', customer.toMap(),
         // Ensure that the Dog has a matching id.
-        where: "codCustomer = $codCustomer"
+        where: "codCustomer = '$codCustomer'"
         // Pass the Dog's id as a whereArg to prevent SQL injection.
         );
   }
