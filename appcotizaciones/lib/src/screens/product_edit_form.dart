@@ -317,8 +317,8 @@ class _ProductEditFormState extends State<ProductEditForm> {
                                               padding:
                                                   const EdgeInsets.fromLTRB(
                                                       5, 5, 0, 30),
-                                              child: Text(option.strNameProduct
-                                                  .toLowerCase()),
+                                              child:
+                                                  Text(option.strNameProduct),
                                             ),
                                             Divider(
                                               color: Colors.black,
