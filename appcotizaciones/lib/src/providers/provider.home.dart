@@ -262,6 +262,7 @@ class _ProviderHome extends State<ProviderHome> {
                                   child: ChangeNotifierProvider(
                                       create: (_) => AuthenticationProvider(),
                                       child: _datosSincronizacion2(
+                                        context: context,
                                         isInternet: _isInternet,
                                         codUser: _CodUser,
                                         sync: _lastlogUser,
@@ -1031,6 +1032,7 @@ class _DataSource extends DataTableSource {
 }
 
 class _datosSincronizacion2 extends StatelessWidget {
+  BuildContext context;
   bool isInternet;
   int codUser;
   SyncLog? sync;
@@ -1043,7 +1045,8 @@ class _datosSincronizacion2 extends StatelessWidget {
   String cod_company;
 
   _datosSincronizacion2(
-      {required this.isInternet,
+      {required this.context,
+      required this.isInternet,
       required this.codUser,
       required this.sync,
       required this.tSyncPending,
@@ -1145,7 +1148,7 @@ class _datosSincronizacion2 extends StatelessWidget {
 
                 // sca.currentState!.showSnackBar(
                 //     SnackBar(content: Text(msg), duration: Duration.,);
-                Navigator.pushNamed(mainContext, "home");
+                Navigator.pushNamed(context, "home");
 
                 //resp = await com.syncComplementsfromApi(
                 ///   codUser, 'Sync-general');

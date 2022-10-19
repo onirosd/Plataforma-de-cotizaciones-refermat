@@ -871,6 +871,9 @@ class _ProductEditFormState extends State<ProductEditForm> {
     if (catProd == 8) {
       peso = cantid;
     }
+    if (catProd == 9) {
+      peso = (diam * 1 * larg) / 1000;
+    }
 
     peso = double.parse(peso.toStringAsFixed(2).toString());
     weightController.text = peso.toStringAsFixed(2).toString();
