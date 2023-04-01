@@ -332,6 +332,7 @@ class _MultimediaaddsubtState extends State<Multimediaaddsubt> {
               codGallery: '');
 
           ListItems.sel_subtipomultimedia.add(nuevo_valor);
+          print("<>>>> impresion de lo que estamos añadiendo");
           print(ListItems.sel_subtipomultimedia);
           // ListItems.sel_subtipomultimedia.comentario =
           //     comentariocontroller.text;

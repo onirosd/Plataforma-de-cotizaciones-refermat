@@ -64,11 +64,11 @@ class ConfigGeneralCtr {
     //String codConf = codConfig.toString();
 
     final res = await dbAuth.rawQuery(
-        'DELETE FROM QuotationProducts WHERE quotation_id NOT IN (SELECT id FROM Quotation WHERE state IN (0,1))');
+        'DELETE FROM QuotationProducts WHERE quotation_id NOT IN (SELECT id FROM Quotation WHERE updateflg = -1)');
     final res2 =
-        await dbAuth.rawQuery('DELETE FROM Quotation WHERE state NOT IN (0,1)');
-    final res3 = await dbAuth
-        .rawQuery('DELETE FROM BILLING WHERE flgState NOT IN  (0,1)');
+        await dbAuth.rawQuery('DELETE FROM Quotation WHERE updateflg != -1');
+    final res3 =
+        await dbAuth.rawQuery('DELETE FROM BILLING WHERE flgSync != -1');
 
     return 1;
   }
@@ -160,7 +160,7 @@ class ConfigGeneralCtr {
     //batch.delete('QuotationProducts');
     batch.delete('Product');
     batch.delete('Product_Stock');
-    //batch.delete('Customer');
+    // batch.delete('Customer');
     //batch.delete('Billing');
 
     try {

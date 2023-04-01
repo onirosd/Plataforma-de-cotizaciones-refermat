@@ -814,7 +814,7 @@ class _ProductEditEditFormState extends State<ProductEditEditForm> {
       peso = cantid;
     }
     if (catProd == 9) {
-      peso = (diam * 1 * larg) / 1000;
+      peso = ((diam * 1 * larg) / 1000) * cantid;
     }
 
     peso = double.parse(peso.toStringAsFixed(2).toString());

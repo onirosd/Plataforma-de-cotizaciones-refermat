@@ -22,7 +22,7 @@ class QuotationCrt0 {
     var dbCustomer = await con.db;
 
     final List<Map<String, dynamic>> maps = await dbCustomer.rawQuery(
-        "select a.id, b.numRucCustomer as ruc, a.dateQuotation as fec, count(c.id) as prods, '' as state, cast(a.state as int) as numstate, a.total from quotation a inner join customer b on cast(b.codCustomer as TEXT) = a.customerId inner join QuotationProducts c on a.id = c.quotation_id where b.codCustomer = '$customer' group by a.id, b.numRucCustomer, a.dateQuotation, cast(a.state as int) order by date(a.dateQuotation)  desc");
+        "select a.id, b.numRucCustomer as ruc, a.dateQuotation as fec, count(c.id) as prods, '' as state, cast(a.state as int) as numstate, a.total from quotation a inner join customer b on cast(b.codCustomer as TEXT) = a.customerId inner join QuotationProducts c on a.id = c.quotation_id where b.codCustomer = '$customer' and cast(a.state as int) != 99 group by a.id, b.numRucCustomer, a.dateQuotation, cast(a.state as int) order by date(a.dateQuotation)  desc");
 
     //List<String>
     return maps.map((c) => SelectQuotation.fromMap(c)).toList();
@@ -69,10 +69,17 @@ class QuotationCrt {
     var dbQuotation = await con.db;
     String query = "";
 
+    // if (enablepreproc == 1) {
+    //   query = "SELECT * FROM Quotation WHERE state in ('1', '5', '0') ";
+    // } else {
+    //   query = "SELECT * FROM Quotation WHERE state in ('1', '5') ";
+    // }
     if (enablepreproc == 1) {
-      query = "SELECT * FROM Quotation WHERE state in ('1', '5', '0') ";
+      query =
+          "SELECT * FROM Quotation WHERE state in ('1', '5', '0', '99') and updateflg = -1";
     } else {
-      query = "SELECT * FROM Quotation WHERE state in ('1', '5') ";
+      query =
+          "SELECT * FROM Quotation WHERE state in ('1', '5', '99') and updateflg = -1";
     }
 
     final List<Map<String, dynamic>> maps = await dbQuotation.rawQuery(query);

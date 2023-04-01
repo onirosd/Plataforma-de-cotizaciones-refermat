@@ -38,6 +38,7 @@ class CustomerGalleryNew extends StatefulWidget {
 }
 
 class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
+  bool _Start_page = true;
   String _LoginUser = '';
   int _CodUser = 0;
   String _Company = '';
@@ -106,10 +107,15 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
   String _input_fecha_creacion = "";
   int _flagadjuntar = 0;
 
+  final Future<String> _delayed = Future<String>.delayed(
+    const Duration(seconds: 0),
+    () => 'Data Loaded',
+  );
+
   void initState() {
     super.initState();
     ListItems.sel_subtipomultimedia.clear();
-    // ListItems.sel_tipomultimedia = 0;
+    ListItems.sel_tipomultimedia = 0;
     // ListItems.sel_subtipomultimedia =  [];
     // ListItems.sel_subtipomultimedia.subTipoMultimedia = 0;
 
@@ -127,9 +133,12 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
       });
     });
 
+    // getValues();
+
     SharedPreferences.getInstance().then((res) {
       if (mounted) {
         setState(() {
+          _showAlert(context, _customer);
           _LoginUser = res.getString("usuario") ?? '';
           _Company = res.getString("empresa") ?? '';
           _CodUser = res.getInt("codigo") ?? 0;
@@ -158,6 +167,16 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
     }
   }
 
+  // Future getValues() async {
+  //   try {
+  //     setState(() {
+  //       _showAlert(context, _customer);
+  //     });
+  //   } catch (err) {
+  //     print(err);
+  //   }
+  // }
+
   Future<void> _onImageButtonPressed(ImageSource source,
       {BuildContext? context, bool isMultiImage = false}) async {
     try {
@@ -184,12 +203,6 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
         _pickImageError = e;
       });
     }
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
   }
 
   Future<bool?> showWarning(BuildContext context) async => showDialog(
@@ -224,11 +237,6 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
               ),
             ],
           ));
-
-  final Future<String> _delayed = Future<String>.delayed(
-    const Duration(seconds: 2),
-    () => 'Data Loaded',
-  );
 
   Future<Position> _getGeoLocationPosition() async {
     bool serviceEnabled;
@@ -266,13 +274,18 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.dataedit.galleriesdetail == null) {
       _customer = ModalRoute.of(context)!.settings.arguments as Customer;
 
       SubTipoMultimedia_crt crt1 = new SubTipoMultimedia_crt();
-      if (_customer.flagTipoMultimedia != 0) {
+      if (_customer.flagTipoMultimedia != 0 && _Start_page == true) {
         crt1
             .getsubTipoMultimedia(_customer.flagTipoMultimedia.toString())
             .then((value) {
@@ -280,22 +293,24 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
         });
       }
 
-      print(">> entrando correctamente");
-      print(_customer);
+      // print(">> entrando correctamente");
+      // print(_customer);
     } else {
-      print(">> no deberia de llegar aqui");
-      _customer = widget.dataedit.customer!;
-      _galeria = widget.dataedit.gallery!;
-      _galeriadetail = widget.dataedit.galleriesdetail!;
-      _galeriadetailsubtipos = widget.dataedit.galleriesdetailsubtipos!;
+      if (_Start_page == true) {
+        //print(">> no deberia de llegar aqui");
+        _customer = widget.dataedit.customer!;
+        _galeria = widget.dataedit.gallery!;
+        _galeriadetail = widget.dataedit.galleriesdetail!;
+        _galeriadetailsubtipos = widget.dataedit.galleriesdetailsubtipos!;
 
-      SubTipoMultimedia_crt crt1 = new SubTipoMultimedia_crt();
-      crt1
-          .getsubTipoMultimedia(
-              widget.dataedit.gallery!.tipoMultimedia.toString())
-          .then((value) {
-        list_subtipomultimedia = value;
-      });
+        SubTipoMultimedia_crt crt1 = new SubTipoMultimedia_crt();
+        crt1
+            .getsubTipoMultimedia(
+                widget.dataedit.gallery!.tipoMultimedia.toString())
+            .then((value) {
+          list_subtipomultimedia = value;
+        });
+      }
       // final veremos = widget.dataedit.gallery!.codGallery;
     }
 
@@ -329,52 +344,58 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
             } else {
+              print(">>>> entrando al future builder");
               // Obtenemos los datos si es que vienen para modificar
 
-              if (widget.dataedit.gallery != null && _contador == 0) {
-                ListItems.sel_tipomultimedia = _galeria.tipoMultimedia;
-                // ListItems.sel_subtipomultimedia.comentario =
-                //     _galeria.comentario;
-                // ListItems.sel_subtipomultimedia.subTipoMultimedia =
-                //     _galeria.subTipoMultimedia;
+              if (_Start_page == true) {
+                if (widget.dataedit.gallery != null) {
+                  ListItems.sel_tipomultimedia = _galeria.tipoMultimedia;
 
-                // print(ListItems.sel_subtipomultimedia);
+                  for (var item in _galeriadetail) {
+                    FIle_send filess = new FIle_send(path: item.pathImage);
+                    urls.add(filess);
+                  }
 
-                for (var item in _galeriadetail) {
-                  FIle_send filess = new FIle_send(path: item.pathImage);
-                  urls.add(filess);
-                }
+                  for (var items in _galeriadetailsubtipos) {
+                    ListItems.sel_subtipomultimedia.add(items);
+                  }
 
-                for (var items in _galeriadetailsubtipos) {
-                  ListItems.sel_subtipomultimedia.add(items);
-                }
-
-                List<TipoMultimedia> list_tipomultimedia_filtrado =
-                    list_tipomultimedia
-                        .where((o) =>
-                            o.codTipomultimedia ==
-                            widget.dataedit.gallery!.tipoMultimedia)
-                        .toList();
-
-                _flagadjuntar = list_tipomultimedia_filtrado[0].flagAdjuntar;
-
-                // int _input_codTipoMultimedia = _galeria.tipoMultimedia;
-                // String _input_codGallery = _galeria.codGallery;
-                // String _input_fecha_creacion = _galeria.fechaCreacion;
-                _contador++;
-              } else {
-                if (_customer.flagTipoMultimedia != 0) {
                   List<TipoMultimedia> list_tipomultimedia_filtrado =
                       list_tipomultimedia
                           .where((o) =>
                               o.codTipomultimedia ==
-                              _customer.flagTipoMultimedia)
+                              widget.dataedit.gallery!.tipoMultimedia)
                           .toList();
 
                   _flagadjuntar = list_tipomultimedia_filtrado[0].flagAdjuntar;
-                  ListItems.sel_tipomultimedia = _customer.flagTipoMultimedia!;
+                  _contador++;
+                } else {
+                  print(">>>> actualizamos de nuevo");
+                  List<TipoMultimedia> list_tipomultimedia_filtrado = [];
+                  if (_customer.flagTipoMultimedia != 0) {
+                    list_tipomultimedia_filtrado = list_tipomultimedia
+                        .where((o) =>
+                            o.codTipomultimedia == _customer.flagTipoMultimedia)
+                        .toList();
+
+                    _flagadjuntar =
+                        list_tipomultimedia_filtrado[0].flagAdjuntar;
+                  }
+
+                  // if (_Start_page == true) {
+                  //   ListItems.sel_tipomultimedia = _customer.flagTipoMultimedia!;
+                  //   _Start_page = false;
+                  // }
                 }
+                _Start_page = false;
               }
+
+              // if (_Start_page == true) {
+
+              // }
+              print("Impresion de los datos obtenidos del submultimedia");
+              print(ListItems.sel_subtipomultimedia);
+              print(">>>" + ListItems.sel_tipomultimedia.toString());
 
               return AbsorbPointer(
                 absorbing: isAbsorbing,
@@ -533,7 +554,8 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
 
                                         ListItems.sel_tipomultimedia =
                                             val as int;
-
+                                        print(ListItems.sel_tipomultimedia
+                                            .toString());
                                         urls.clear();
                                         setState(() {
                                           ListItems.sel_subtipomultimedia
@@ -609,18 +631,6 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
                                                               fontSize: 12),
                                                         ),
                                                       ),
-                                                      // Expanded(
-                                                      //   flex: 1,
-                                                      //   child: Container(
-                                                      //     alignment: Alignment.topRight,
-                                                      //     child: Text(
-                                                      //       ListItems.listItems[index].sub_total
-                                                      //           .toString(),
-                                                      //       style: TextStyle(fontSize: 10),
-                                                      //       textAlign: TextAlign.right,
-                                                      //     ),
-                                                      //   ),
-                                                      // ),
                                                     ],
                                                   ),
                                                   trailing: Wrap(
@@ -1122,6 +1132,127 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
     );
   }
 
+  void _showAlert(BuildContext context, Customer customerMensaje) async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          if (customerMensaje.flagMensajeInvasivo != 1) {
+            // print(">>> entramos porqueeeee");
+            Navigator.of(context).pop();
+            return Text('');
+          } else {
+            print(">>> entramos aquii");
+            return AlertDialog(
+                title: Text('RECORDATORIO'),
+                actions: [
+                  Expanded(
+                    flex: 8,
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Text('Mensaje : '),
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child: Text(customerMensaje.mensaje.toString()),
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Text('Deuda Total : '),
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child:
+                                  Text(customerMensaje.deudaTotal.toString()),
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Text('Deuda Vencida : '),
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child:
+                                  Text(customerMensaje.deudaVencida.toString()),
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Text('Dias Vencidos : '),
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child:
+                                  Text(customerMensaje.diasVencida.toString()),
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Text('Fecha Ultima Venta : '),
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child: Text(
+                                  customerMensaje.fechaUltimaVenta.toString()),
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Text('Condición de Credito : '),
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child: Text(
+                                  customerMensaje.condicionCredito.toString()),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  //   Text(">> Aqui algo"),
+                  //   Text(customerMensaje.mensaje.toString()),
+                  TextButton(
+                    onPressed: () {
+                      // Close the dialog
+                      // Navigator.of(ctx).pop();
+
+                      // Future.delayed(const Duration(milliseconds: 500), () {
+                      //   Navigator.of(context).pop();
+                      //   // Navigator.of(context).popUntil((route) => false);
+                      // });
+
+                      // WidgetsBinding.instance.addPostFrameCallback((_) {
+                      Navigator.of(context).pop();
+                      // });
+                    },
+                    child: const Text('Recibido'),
+                  )
+                ],
+                actionsAlignment: MainAxisAlignment.start);
+          }
+        });
+  }
+
   _crearFecha(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(left: 0),
@@ -1192,6 +1323,9 @@ class _CustomerGalleryNewState extends State<CustomerGalleryNew> {
                   // ListItems.sel_subtipomultimedia.tipoMultimedia = 0;
 
                   // _displayTextInputDialog;
+
+                  print(">>>>>> antes que  abramos el popup");
+                  print(">>>" + ListItems.sel_tipomultimedia.toString());
 
                   showDialog(
                       context: context2,

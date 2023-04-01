@@ -67,6 +67,10 @@ class TiPersonCtr {
     final List<Map<String, dynamic>> maps2 = await dbCustomer.rawQuery(
         "SELECT * FROM Ti_Person WHERE codPerson = $codPerson LIMIT 1");
 
+    print(
+        ">>>>> 1 ñeeeee ==>> esta tabla esta viniendo vacio Ti_Person , revisar");
+    print(maps2);
+
     if (maps2.first["codPerson"] != null) {
       tiperson.codPerson = maps2.first["codPerson"];
       tiperson.strCelphone = maps2.first["strCelphone"];

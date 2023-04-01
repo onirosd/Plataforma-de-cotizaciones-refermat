@@ -93,6 +93,8 @@ class _CustomerQuotationNewState extends State<CustomerQuotationNew> {
   TextEditingController totalController = TextEditingController();
   TextEditingController lgvController = TextEditingController();
 
+  Customer _customerMensaje = Customer();
+
   late int _stateQuotation = 0;
   int _bloquearCurrency = 0;
 
@@ -198,6 +200,19 @@ class _CustomerQuotationNewState extends State<CustomerQuotationNew> {
         ListItems.listmoneda.clear();
 
         ListSelProduct.listproduct.clear();
+        _showAlert(context, _customer);
+        // showDialog(
+        //   context: context,
+        //   builder: (context) => AlertDialog(
+        //     content: const Text('Dialog content'),
+        //     actions: [
+        //       TextButton(
+        //         onPressed: () => Navigator.pop(context),
+        //         child: const Text('Accept'),
+        //       ),
+        //     ],
+        //   ),
+        // );
       });
     } catch (err) {
       print(err);
@@ -232,16 +247,12 @@ class _CustomerQuotationNewState extends State<CustomerQuotationNew> {
     super.dispose();
   }
 
+  int _conteo = 0;
   @override
   Widget build(BuildContext context) {
     final customer = ModalRoute.of(context)!.settings.arguments as Customer;
     _customer = customer;
     QuotationCrt crt = new QuotationCrt();
-
-    // print(datacompany);
-    //List<SelectQuotation> listQuotations =
-    //  crt.getSelectQuotationByCustomer(customer.codCustomer.toString())
-    //    as List<SelectQuotation>;
 
     _isInternet =
         _source.keys.toList()[0] == ConnectivityResult.none ? false : true;
@@ -318,6 +329,116 @@ class _CustomerQuotationNewState extends State<CustomerQuotationNew> {
         ),
       ),
     );
+  }
+
+  void _showAlert(BuildContext context, Customer customerMensaje) async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          if (customerMensaje.flagMensajeInvasivo != 1) {
+            Navigator.of(context).pop();
+            return Text('');
+          } else {
+            return AlertDialog(
+                title: Text('RECORDATORIO'),
+                actions: [
+                  Expanded(
+                    flex: 8,
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Text('Mensaje : '),
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child: Text(customerMensaje.mensaje.toString()),
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Text('Deuda Total : '),
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child:
+                                  Text(customerMensaje.deudaTotal.toString()),
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Text('Deuda Vencida : '),
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child:
+                                  Text(customerMensaje.deudaVencida.toString()),
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Text('Dias Vencidos : '),
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child:
+                                  Text(customerMensaje.diasVencida.toString()),
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Text('Fecha Ultima Venta : '),
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child: Text(
+                                  customerMensaje.fechaUltimaVenta.toString()),
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Text('Condición de Credito : '),
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child: Text(
+                                  customerMensaje.condicionCredito.toString()),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  //   Text(">> Aqui algo"),
+                  //   Text(customerMensaje.mensaje.toString()),
+                  TextButton(
+                    onPressed: () {
+                      // Close the dialog
+                      Navigator.of(ctx).pop();
+                    },
+                    child: const Text('Recibido.'),
+                  )
+                ],
+                actionsAlignment: MainAxisAlignment.start);
+          }
+        });
   }
 
   List<Widget> userTile() {
@@ -948,6 +1069,7 @@ class _CustomerQuotationNewState extends State<CustomerQuotationNew> {
           observation: observationController.text,
           payId: selectedPayConditions.codPayCondition,
           state: '0',
+          updateflg: -1,
           company: int.parse(_CodCompany), //_Company.toString(),
           // quotationParents: ,
           // updateDate: ,
@@ -1007,6 +1129,7 @@ class _CustomerQuotationNewState extends State<CustomerQuotationNew> {
           observation: observationController.text,
           payId: selectedPayConditions.codPayCondition,
           state: '1',
+          updateflg: -1,
           company: int.parse(_CodCompany), //_Company.toString(),
           //company: _Company.toString(),
           // quotationParents: ,

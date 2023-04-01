@@ -1006,9 +1006,12 @@ class _DataSource extends DataTableSource {
                         List<Billing> data =
                             await crt.getDataBillingsperCode(row.id);
 
+                        Billingandflag billingflag =
+                            Billingandflag(billingdata: data[0], switch1: 1);
+
                         Navigator.pushNamedAndRemoveUntil(
                             context, 'BillingEdit', (route) => false,
-                            arguments: data[0]);
+                            arguments: billingflag);
                       }
                     },
                   ),
@@ -1119,8 +1122,9 @@ class _datosSincronizacion2 extends StatelessWidget {
                         codUser, codList, cod_company);
 
                 print(" Sincronizando los recibos y cotizaciones ");
-                ResponseError resp7 = await configgeneral
-                    .executionRuleUploadSyncQuoBill(codUser, position1);
+                ResponseError resp7 =
+                    await configgeneral.executionRuleUploadSyncQuoBill(
+                        codUser, position1, cod_company);
 
                 /*print("Cargando clientes");
                                               ResponseError resp2 =

@@ -879,7 +879,7 @@ class _CustomerQuotationEditState extends State<CustomerQuotationEdit> {
                     //updQuotation.payId =
                     //  selectedPayConditions.codPayCondition;
                     updQuotation.state = '0';
-                    updQuotation.updateflg = 0;
+                    updQuotation.updateflg = -1;
 
                     try {
                       setState(() => loader = true);
@@ -1049,7 +1049,7 @@ class _CustomerQuotationEditState extends State<CustomerQuotationEdit> {
                     //updQuotation.payId =
                     //  selectedPayConditions.codPayCondition;
                     updQuotation.state = '1';
-                    updQuotation.updateflg = 0;
+                    updQuotation.updateflg = -1;
 
                     try {
                       setState(() => loader = true);
@@ -1173,7 +1173,133 @@ class _CustomerQuotationEditState extends State<CustomerQuotationEdit> {
                 ),
               ),
             ),
+            space,
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Color.fromARGB(255, 154, 160, 154),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                  textStyle: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.normal),
+                ),
+                onPressed: () async {
+                  int validar = 0;
+                  await showDialog(
+                      context: context,
+                      builder: (BuildContext ctx) {
+                        return AlertDialog(
+                          title: const Text('Confirmar la Anulación'),
+                          content: const Text(
+                              'Estas seguro que deseas anular la cotización ?'),
+                          actions: [
+                            // The "Yes" button
+                            TextButton(
+                                onPressed: () async {
+                                  //QuotationCrt quotationCrt = new QuotationCrt();
 
+                                  // FocusScope.of(context).unfocus();
+                                  print(">>> entrando 0001 hasta");
+                                  if (_key.currentState!.validate()) {
+                                    QuotationCrt quotationCrt =
+                                        new QuotationCrt();
+                                    QuotationProductCrt quotationproductCrt =
+                                        new QuotationProductCrt();
+
+                                    updQuotation.total = totalController.text;
+                                    updQuotation.subTotal =
+                                        subTotalController.text;
+                                    updQuotation.dateQuotation =
+                                        dateController.text;
+
+                                    updQuotation.lgv = lgvController.text;
+                                    updQuotation.nameBusiness =
+                                        socialController.text;
+                                    // createUser: ,
+                                    updQuotation.observation =
+                                        observationController.text;
+                                    //updQuotation.payId =
+                                    //  selectedPayConditions.codPayCondition;
+                                    updQuotation.state = '99';
+                                    updQuotation.updateflg = -1;
+
+                                    // try {
+                                    print(">>>>>> llegando al try");
+                                    if (await quotationCrt
+                                            .updateQuotation(updQuotation) >
+                                        0) {
+                                      await quotationproductCrt
+                                          .deleteQuotationProductsperCode(
+                                              updQuotation.id.toString());
+
+                                      int corre = 1;
+                                      await Future.forEach(
+                                          ListItemsEdit.listItems,
+                                          (QuotationProduct element) async {
+                                        element.quotation_id = updQuotation.id;
+                                        element.id =
+                                            updQuotation.id.toString() +
+                                                corre.toString();
+
+                                        await quotationproductCrt
+                                            .insertQuotationProduct(element);
+
+                                        corre = corre + 1;
+                                      });
+                                    }
+                                    validar = 1;
+                                    print(">>>>> llegamos a este punto ");
+
+                                    // Navigator.pushNamedAndRemoveUntil(
+                                    //     context, 'listQuotas', (route) => false,
+                                    //     arguments: cust);
+                                    // } catch (err) {
+
+                                    // }
+                                  }
+
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Aceptar')),
+
+                            TextButton(
+                                onPressed: () {
+                                  // Close the dialog
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Cancelar'))
+                          ],
+                        );
+                      });
+                  // print(">>>>> llegamos aqui");
+                  if (validar == 1) {
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, 'listQuotas', (route) => false,
+                        arguments: cust);
+                  }
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  // ignore: prefer_const_literals_to_create_immutables
+                  children: [
+                    if (loader)
+                      Center(
+                          child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ))
+                    else ...[
+                      Text("Anular Cotización",
+                          style: TextStyle(fontSize: 15.0)),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Icon(Icons.cancel),
+                    ],
+                  ],
+                ),
+              ),
+            ),
             SizedBox(
               height: 60,
             ),

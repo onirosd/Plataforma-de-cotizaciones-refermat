@@ -18,7 +18,6 @@ class ApiAutentication {
 
     List<Authentication> data = await api.getAllAutentication(company);
     int contador = await data.length;
-    //print(contador);
 
     if (contador > 0) {
       await crt.deleteAllAutentication();

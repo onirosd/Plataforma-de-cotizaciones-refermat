@@ -552,7 +552,9 @@ class _CustomerBillingEditState extends State<CustomerBillingEdit> {
                                         _editingController.text;
 
                                     billingflag.billingdata.flgState =
-                                        1; // estado procesaro
+                                        1; // estado procesado
+                                    billingflag.billingdata.flgSync = -1;
+
                                     BillingCrt crt = BillingCrt();
 
                                     try {

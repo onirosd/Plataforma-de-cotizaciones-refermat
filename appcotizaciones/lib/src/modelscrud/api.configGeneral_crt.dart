@@ -62,7 +62,11 @@ class ApiConfigGeneral {
     return data.length;
   }
 
+  /*DEPRECADOOOOOOOOOOO*/
   Future<ResponseError> executionRuleCleanTables() async {
+    /* No Tiene mucho sentido esta limpieza , se va a deprecar 
+       hasta encontrarle un verdadero sentido */
+
     int numTablesClean = 0;
     ConfigGeneralCtr crt = ConfigGeneralCtr();
     SyncLogCtr log = new SyncLogCtr();
@@ -156,19 +160,22 @@ class ApiConfigGeneral {
     String description = "";
     int error = 1;
     int success = 0;
-    ResponseError resp =
-        new ResponseError(description: "", error: 0, success: 1);
+    ResponseError resp = new ResponseError(
+        description: "No tenemos nuevos clientes", error: 0, success: 1);
 
     CustomerApiProvider api_customer = new CustomerApiProvider();
     CustomerCtr crt_customer = new CustomerCtr();
 
     ConfigGeneralCtr crt = ConfigGeneralCtr();
 
-    ConfGeneral confiini =
-        await crt.getConfigGeneralforUserforRule("LoadCustomer");
+    /* Esta validacion ya no va porque siempre se tiene que hacer la 
+       actualizacion  por ser registro nuevo   */
 
-    if (confiini.codconfigGeneral > 0) {
-      final customerData = await crt_customer.getCustomernoSincronice();
+    // ConfGeneral confiini =
+    //     await crt.getConfigGeneralforUserforRule("LoadCustomer");
+
+    List<Customer> customerData = await crt_customer.getCustomernoSincronice();
+    if (customerData.length > 0) {
       resp = await api_customer.uploadCustomers(customerData);
 
       if (resp.error == 2) {
@@ -178,8 +185,8 @@ class ApiConfigGeneral {
         }
       }
 
-      SyncLogCtr crt = new SyncLogCtr();
-      await crt.saveLogtoUser(codUser, 'UploadClients', resp.description);
+      SyncLogCtr crt2 = new SyncLogCtr();
+      await crt2.saveLogtoUser(codUser, 'UploadClients', resp.description);
     }
 
     return resp;
@@ -192,8 +199,10 @@ class ApiConfigGeneral {
     ResponseError resp0 =
         new ResponseError(description: "", error: 0, success: 1);
 
-    ResponseError resp =
-        new ResponseError(description: "", error: 0, success: 1);
+    ResponseError resp = new ResponseError(
+        description: "No tneemos galerias para sincronizar",
+        error: 0,
+        success: 1);
     ConfigGeneralCtr crt = ConfigGeneralCtr();
 
     ConfGeneral confiini =
@@ -225,11 +234,12 @@ class ApiConfigGeneral {
           }
         }
       }
-    }
 
-    // Generamos el log de la sincronizacion
-    SyncLogCtr crt_sync = new SyncLogCtr();
-    await crt_sync.saveLogtoUser(codUser, 'UploadGalleries', resp.description);
+      // Generamos el log de la sincronizacion
+      SyncLogCtr crt_sync = new SyncLogCtr();
+      await crt_sync.saveLogtoUser(
+          codUser, 'UploadGalleries', resp.description);
+    }
 
     return resp;
   }
@@ -238,8 +248,10 @@ class ApiConfigGeneral {
     String description = "";
     int error = 1;
     int success = 0;
-    ResponseError resp =
-        new ResponseError(description: "", error: 0, success: 1);
+    ResponseError resp = new ResponseError(
+        description: "No tenemos cotizaciones para sincronizar",
+        error: 0,
+        success: 1);
     ConfigGeneralCtr crt = ConfigGeneralCtr();
 
     ConfGeneral confiini =
@@ -255,18 +267,24 @@ class ApiConfigGeneral {
         await crt_quotationexport.getDataQuotationProdExp(enablepreproc);
     //print(listquotationsdata);
 
-    resp =
-        await api_quotation.uploadQuotationProductsExport(listquotationsdata);
+    if (listquotationsdata.length > 0) {
+      resp =
+          await api_quotation.uploadQuotationProductsExport(listquotationsdata);
 
-    if (resp.error == 2) {
-      for (var list in listquotationsdata) {
-        list.quotat.state = "2";
-        print(await crt_quotation.updateQuotation(list.quotat));
+      if (resp.error == 2) {
+        for (var list in listquotationsdata) {
+          list.quotat.updateflg = 0;
+          list.quotat.state =
+              list.quotat.state == '1' ? '2' : list.quotat.state;
+
+          await crt_quotation.updateQuotation(list.quotat);
+        }
       }
-    }
 
-    SyncLogCtr crt_sync = new SyncLogCtr();
-    await crt_sync.saveLogtoUser(codUser, 'UploadQuotation', resp.description);
+      SyncLogCtr crt_sync = new SyncLogCtr();
+      await crt_sync.saveLogtoUser(
+          codUser, 'UploadQuotation', resp.description);
+    }
 
     return resp;
   }
@@ -275,7 +293,10 @@ class ApiConfigGeneral {
     String description = "";
     int error = 1;
     int success = 0;
-    ResponseError resp;
+    ResponseError resp = ResponseError(
+        description: 'No tenemos recibos para sincronizar',
+        error: 0,
+        success: 1);
     ConfigGeneralCtr crt = ConfigGeneralCtr();
 
     ConfGeneral confiini =
@@ -287,20 +308,26 @@ class ApiConfigGeneral {
     //CustomerCtr crt_customer = new CustomerCtr();
 
     final billingsData = await crt_billing.getBillingsSincronice(enablepreproc);
-    resp = await api_customer.uploadBillings(billingsData);
 
-    if (resp.error == 2) {
-      for (var billing in billingsData) {
-        billing.flgSync = 1;
-        billing.flgState = 2;
+    if (billingsData.length > 0) {
+      resp = await api_customer.uploadBillings(billingsData);
 
-        print(billing);
-        await crt_billing.updateBilling(billing);
+      if (resp.error == 2) {
+        for (var billing in billingsData) {
+          // billing.flgSync  = 1;
+          // billing.flgState = 2;
+
+          billing.flgSync = 0;
+          billing.flgState = billing.flgState == 1 ? 2 : billing.flgState;
+
+          // print(billing);
+          await crt_billing.updateBilling(billing);
+        }
       }
-    }
 
-    SyncLogCtr crt_long = new SyncLogCtr();
-    await crt_long.saveLogtoUser(codUser, 'UploadBillings', resp.description);
+      SyncLogCtr crt_long = new SyncLogCtr();
+      await crt_long.saveLogtoUser(codUser, 'UploadBillings', resp.description);
+    }
 
     return resp;
   }
@@ -336,7 +363,7 @@ class ApiConfigGeneral {
   }
 
   Future<ResponseError> executionRuleUploadSyncQuoBill(
-      int codUser, String position) async {
+      int codUser, String position, String cod_company) async {
     String description = "";
     int error = 1;
     int success = 0;
@@ -359,10 +386,12 @@ class ApiConfigGeneral {
 
       List<ComplementsBillQuo> list =
           /* Traemos las cotizaciones y recibos de la nube.*/
-          await api_stockproduct.uploadComplements(codUser, bgn, end, position);
+          await api_stockproduct.uploadComplements(
+              codUser, bgn, end, position, cod_company);
       /* Solo eliminamos de la BD , aquellos registros que no estan en estado 0 o 1, ya que estos todavia no estan sincronizados en 
-         la nube . */
+              la nube . */
       await crt.deleteBillandQuotationwithoutdatanotfinish();
+
       /* Insertamos las cotizaciones y recibos al celular. */
       ResponseError responseError =
           await api_stockproduct.batchInsertComplements(list);
@@ -374,6 +403,48 @@ class ApiConfigGeneral {
       resp.description =
           "Recibos y Cotizaciones : Sin sincronización pendiente.";
     }
+
+    return resp;
+  }
+
+  Future<ResponseError> executionRuleUploadSyncQuoBillLogueo(
+      int codUser, String position, String cod_company) async {
+    String description = "";
+    int error = 1;
+    int success = 0;
+    int respuesta = 0;
+    ConfigGeneralCtr crt = ConfigGeneralCtr();
+    ResponseError resp =
+        new ResponseError(description: "", error: 0, success: 1);
+
+    // ConfGeneral confiini =
+    //     await crt.getConfigGeneralforUserforRule("LoadQuoBills");
+
+    // if (confiini.codconfigGeneral > 0) {
+    ConfGeneral dayssync = await crt.getConfigGeneralforUserforRule("DaysSync");
+    String bgn = dayssync.pivot2 == null ? '' : dayssync.pivot2;
+    String end = dayssync.pivot3 == null ? '' : dayssync.pivot3;
+
+    ComplementsQuoBillApiProvider api_stockproduct =
+        new ComplementsQuoBillApiProvider();
+
+    List<ComplementsBillQuo> list =
+        /* Traemos las cotizaciones y recibos de la nube.*/
+        await api_stockproduct.uploadComplements(
+            codUser, bgn, end, position, cod_company);
+    /* Solo eliminamos de la BD , aquellos registros que no estan en estado 0 o 1, ya que estos todavia no estan sincronizados en 
+              la nube . */
+    // await crt.deleteBillandQuotationwithoutdatanotfinish();
+
+    /* Insertamos las cotizaciones y recibos al celular. */
+    resp = await api_stockproduct.batchInsertComplements(list);
+
+    SyncLogCtr log = new SyncLogCtr();
+    await log.saveLogtoUser(codUser, 'SyncQuotationBillings', resp.description);
+    // } else {
+    //   resp.description =
+    //       "Recibos y Cotizaciones : Sin sincronización pendiente.";
+    // }
 
     return resp;
   }
@@ -451,10 +522,11 @@ class ApiConfigGeneral {
     if (configuracion.codconfigGeneral > 0 || forzar == 1) {
       // try {
       List<ComplementsCustoGalle> ListaCustomerGaleries =
-          await crt1.uploadComplementsCustomerGalleries(codempresa);
+          await crt1.uploadComplementsCustomerGalleries(codempresa, codUser);
 
       if (ListaCustomerGaleries[0].customer.length > 0) {
         await crt.deleteCustomerandGaleriesfinish();
+        print(">>>> entramos a insertar galerias ");
         resp =
             await crt1.batchInsertComplementscustogalle(ListaCustomerGaleries);
       }
@@ -481,6 +553,9 @@ class ApiConfigGeneral {
   cleanUpdatePrincipaltables(int codUser1) async {
     LastAutenticationCrt crt = LastAutenticationCrt();
     ConfigGeneralCtr crt1 = ConfigGeneralCtr();
+    int estado = 0;
+    /*** Se Mantiene la información si el ultimo usuario logueado es la misma persona,
+         si no es la misma persona se limpian las tablas  ***/
 
     List<LastAutentication> list = await crt.getLastAutentication(codUser1);
     if (list.length == 0) {
@@ -488,9 +563,11 @@ class ApiConfigGeneral {
           new LastAutentication(codUser: codUser1, lastDate: '');
 
       crt1.batchCleanPrincipalTables();
+      crt1.deleteCustomerandGaleriesfinish();
       crt1.deleteBillandQuotationwithoutdatanotfinish();
-
       crt.insLastAutentication(lastauth);
+      estado = 1;
     }
+    return estado;
   }
 }

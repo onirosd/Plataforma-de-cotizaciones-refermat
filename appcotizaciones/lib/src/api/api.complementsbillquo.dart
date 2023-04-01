@@ -19,13 +19,18 @@ class ComplementsQuoBillApiProvider {
   var url_complements =
       DIR_URL + "Appstock/controller/services/SyncBillQuotation.php";
 
-  Future<List<ComplementsBillQuo>> uploadComplements(
-      int coduser, String bgn, String end, String position) async {
+  Future<List<ComplementsBillQuo>> uploadComplements(int coduser, String bgn,
+      String end, String position, String cod_company) async {
     // ResponseError error =
     //     new ResponseError(description: "", error: 0, success: 0);
 
     RequestBillQuo reqe = new RequestBillQuo(
-        bgn: bgn, end: end, codUser: coduser, position: position);
+        bgn: bgn,
+        end: end,
+        codUser: coduser,
+        position: position,
+        cod_company: cod_company);
+
     List data = [];
 
     try {
@@ -62,6 +67,8 @@ class ComplementsQuoBillApiProvider {
     if (listQuotation.length > 0) {
       // batch.delete('Quotation'); //('Company', company.toMap());
 
+      print(">>> entrando");
+
       listQuotation.forEach((quotation) {
         if (quotation.state == '5' && quotation.updateflg == 1) {
           quotation.state = '2';
@@ -90,6 +97,7 @@ class ComplementsQuoBillApiProvider {
     try {
       // await deleteDataComplements(queryDelet);
       await batch.commit(continueOnError: false);
+      print(">>> entrando y no fallamos");
       responseerror.error = 0;
       responseerror.success = 1;
       responseerror.description =
@@ -111,25 +119,27 @@ class RequestBillQuo {
   String bgn;
   String end;
   String position;
+  String cod_company;
 
-  RequestBillQuo({
-    required this.codUser,
-    required this.bgn,
-    required this.end,
-    required this.position,
-  });
+  RequestBillQuo(
+      {required this.codUser,
+      required this.bgn,
+      required this.end,
+      required this.position,
+      required this.cod_company});
 
-  RequestBillQuo copyWith({
-    int? codUser,
-    String? bgn,
-    String? end,
-    String? position,
-  }) {
+  RequestBillQuo copyWith(
+      {int? codUser,
+      String? bgn,
+      String? end,
+      String? position,
+      String? cod_company}) {
     return RequestBillQuo(
       codUser: codUser ?? this.codUser,
       bgn: bgn ?? this.bgn,
       end: end ?? this.end,
       position: position ?? this.position,
+      cod_company: cod_company ?? this.cod_company,
     );
   }
 
@@ -139,16 +149,17 @@ class RequestBillQuo {
       'bgn': bgn,
       'end': end,
       'position': position,
+      'cod_company': cod_company
     };
   }
 
   factory RequestBillQuo.fromMap(Map<String, dynamic> map) {
     return RequestBillQuo(
-      codUser: map['codUser'],
-      bgn: map['bgn'],
-      end: map['end'],
-      position: map['position'],
-    );
+        codUser: map['codUser'],
+        bgn: map['bgn'],
+        end: map['end'],
+        position: map['position'],
+        cod_company: map['cod_company']);
   }
 
   String toJson() => json.encode(toMap());
@@ -158,7 +169,7 @@ class RequestBillQuo {
 
   @override
   String toString() {
-    return 'RequestBillQuo(codUser: $codUser, bgn: $bgn, end: $end, position: $position)';
+    return 'RequestBillQuo(codUser: $codUser, bgn: $bgn, end: $end, position: $position, cod_company: $cod_company)';
   }
 
   @override
@@ -169,11 +180,7 @@ class RequestBillQuo {
         other.codUser == codUser &&
         other.bgn == bgn &&
         other.end == end &&
-        other.position == position;
-  }
-
-  @override
-  int get hashCode {
-    return codUser.hashCode ^ bgn.hashCode ^ end.hashCode ^ position.hashCode;
+        other.position == position &&
+        other.cod_company == cod_company;
   }
 }

@@ -54,9 +54,10 @@ class BillingCrt {
     var dbBilling = await con.db;
     String query = "";
     if (enablepreproc == 1) {
-      query = "SELECT * FROM Billing WHERE flgState in (1, 5, 0) ";
+      query =
+          "SELECT * FROM Billing WHERE flgState in (1, 5, 0) and flgSync = -1";
     } else {
-      query = "SELECT * FROM Billing WHERE flgState in (1, 5) ";
+      query = "SELECT * FROM Billing WHERE flgState in (1, 5) and flgSync = -1";
     }
 
     final List<Map<String, dynamic>> maps = await dbBilling.rawQuery(query);

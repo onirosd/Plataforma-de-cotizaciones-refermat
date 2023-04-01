@@ -40,11 +40,12 @@ class _CustomerBillingNewState extends State<CustomerBillingNew> {
   bool _isInternet = true;
   QuotationCrt crt = new QuotationCrt();
 
-  late Future<List<PaymentMethod>> _metodospago;
+  List<PaymentMethod> _metodospago = [];
   List<BillingType> _tipocobro = [];
   List<Currency> _currency = [];
   List<Bank> _bank = [];
   bool isAbsorbing = false;
+  Customer _customer = new Customer();
 
   Billing _bill = new Billing(
       codBillingUniq: "",
@@ -86,6 +87,11 @@ class _CustomerBillingNewState extends State<CustomerBillingNew> {
     CurrencyCtr ctr3 = new CurrencyCtr();
     BankCtr ctr4 = new BankCtr();
 
+    // getValues();
+    // setState(() {
+    //   getValues();
+    // });
+
     setState(() {
       ctr4.getDataBanks().then((value) {
         _bank = value;
@@ -105,18 +111,36 @@ class _CustomerBillingNewState extends State<CustomerBillingNew> {
     });
 
     setState(() {
-      _metodospago = crt1.getDataPaymentMethods();
+      crt1.getDataPaymentMethods().then((value) {
+        _metodospago = value;
+      });
     });
+
+    // setState(() {
+    //   _metodospago = crt1.getDataPaymentMethods();
+    // });
 
     //  crt1.getDataPaymentMethods();
 
     SharedPreferences.getInstance().then((res) {
       if (mounted) {
-        setState(() {
+        // PaymentMethodCtr crt1 = new PaymentMethodCtr();
+        // BillingTypeCtr ctr2 = new BillingTypeCtr();
+        // CurrencyCtr ctr3 = new CurrencyCtr();
+        // BankCtr ctr4 = new BankCtr();
+
+        setState(() async {
+          // _bank = await ctr4.getDataBanks();
+          // _currency = await ctr3.getDataCurrency();
+          // _tipocobro = await ctr2.getDataBillingType();
+          // _metodospago = await crt1.getDataPaymentMethods();
+
           _LoginUser = res.getString("usuario") ?? '';
           _Company = res.getString("empresa") ?? '';
           _CodUser = res.getInt("codigo") ?? 0;
           _CodCompany = res.getString("codcompany") ?? '';
+
+          _showAlert(context, _customer);
         });
       }
     });
@@ -127,6 +151,31 @@ class _CustomerBillingNewState extends State<CustomerBillingNew> {
         setState(() => _source = source);
       }
     });
+  }
+
+  Future getValues() async {
+    PaymentMethodCtr crt1 = new PaymentMethodCtr();
+    BillingTypeCtr ctr2 = new BillingTypeCtr();
+    CurrencyCtr ctr3 = new CurrencyCtr();
+    BankCtr ctr4 = new BankCtr();
+
+    List<Bank> listbank = await ctr4.getDataBanks();
+    List<Currency> listcurrency = await ctr3.getDataCurrency();
+    List<BillingType> listbillingtype = await ctr2.getDataBillingType();
+    List<PaymentMethod> listmethods = await crt1.getDataPaymentMethods();
+
+    try {
+      setState(() {
+        _bank = listbank;
+        _currency = listcurrency;
+        _tipocobro = listbillingtype;
+        _metodospago = listmethods;
+
+        _showAlert(context, _customer);
+      });
+    } catch (err) {
+      print(err);
+    }
   }
 
   @override
@@ -156,6 +205,7 @@ class _CustomerBillingNewState extends State<CustomerBillingNew> {
   @override
   Widget build(BuildContext context) {
     final customer = ModalRoute.of(context)!.settings.arguments as Customer;
+    _customer = customer;
     //CustomerProvider customerProvider = Provider.of<CustomerProvider>(context);
 
     // final riKey1 = const Key('__RIKEY1__');
@@ -186,9 +236,8 @@ class _CustomerBillingNewState extends State<CustomerBillingNew> {
           isOnline: _isInternet,
         ),
         body: FutureBuilder(
-            future: _metodospago,
-            builder: (BuildContext context,
-                AsyncSnapshot<List<PaymentMethod>> snapshot) {
+            future: Future.delayed(Duration(seconds: 0)),
+            builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
               } else {
@@ -311,9 +360,9 @@ class _CustomerBillingNewState extends State<CustomerBillingNew> {
                                       decoration: InputDecoration(
                                           labelText: "Metodo de Pago"),
                                       // decoration: textInputDecoration,
-                                      value: snapshot.data![0].codPaymentMethod,
+                                      value: _metodospago[0].codPaymentMethod,
 
-                                      items: snapshot.data!.map((e) {
+                                      items: _metodospago.map((e) {
                                         return DropdownMenuItem(
                                           value: e.codPaymentMethod != null
                                               ? e.codPaymentMethod
@@ -574,6 +623,9 @@ class _CustomerBillingNewState extends State<CustomerBillingNew> {
                                           _bill.dteCreateDate =
                                               DateTime.now().toString();
 
+                                          _bill.flgState = 0;
+                                          _bill.flgSync = -1;
+
                                           // print(_bill.toString());
                                           // If the form is valid, display a snackbar. In the real world,
                                           // you'd often call a server or save the information in a database.
@@ -648,6 +700,7 @@ class _CustomerBillingNewState extends State<CustomerBillingNew> {
 
                                           formGlobalKey.currentState!.save();
                                           _bill.flgState = 1;
+                                          _bill.flgSync = -1;
                                           _bill.dteBillingDate =
                                               _editingController.text;
                                           _bill.dteCreateDate =
@@ -765,6 +818,118 @@ class _CustomerBillingNewState extends State<CustomerBillingNew> {
   //       _selectedDate = picked;
   //     });
   // }
+
+  void _showAlert(BuildContext context, Customer customerMensaje) async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext ctx) {
+          if (customerMensaje.flagMensajeInvasivo != 1) {
+            // print(">>> entramos porqueeeee");
+            Navigator.of(context).pop();
+            return Text('');
+          } else {
+            print(">>> entramos aquii");
+            return AlertDialog(
+                title: Text('RECORDATORIO'),
+                actions: [
+                  Expanded(
+                    flex: 8,
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Text('Mensaje : '),
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child: Text(customerMensaje.mensaje.toString()),
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Text('Deuda Total : '),
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child:
+                                  Text(customerMensaje.deudaTotal.toString()),
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Text('Deuda Vencida : '),
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child:
+                                  Text(customerMensaje.deudaVencida.toString()),
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Text('Dias Vencidos : '),
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child:
+                                  Text(customerMensaje.diasVencida.toString()),
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Text('Fecha Ultima Venta : '),
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child: Text(
+                                  customerMensaje.fechaUltimaVenta.toString()),
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Text('Condición de Credito : '),
+                            ),
+                            Expanded(
+                              flex: 5,
+                              child: Text(
+                                  customerMensaje.condicionCredito.toString()),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  //   Text(">> Aqui algo"),
+                  //   Text(customerMensaje.mensaje.toString()),
+                  TextButton(
+                    onPressed: () {
+                      // Close the dialog
+                      Navigator.of(ctx).pop();
+                    },
+                    child: const Text('Recibido.'),
+                  )
+                ],
+                actionsAlignment: MainAxisAlignment.start);
+          }
+        });
+  }
 
   _crearFecha(BuildContext context) {
     return Container(

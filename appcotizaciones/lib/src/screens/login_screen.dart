@@ -60,26 +60,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return file;
   }
 
-  // void getImagesCompanies(List<Company> companies) async {
-  //   for (var i = 0; i < companies.length; i++) {
-  //     try {
-  //       final ByteData byteData =
-  //           await NetworkAssetBundle(Uri.parse(companies[i].strLogo.toString()))
-  //               .load("");
-  //       final Uint8List bytes = byteData.buffer.asUint8List();
-  //       String str_image = companies[i].str_image.toString();
-  //       String dir = (await getTemporaryDirectory()).path;
-  //       String fullPath = '$dir/$str_image';
-  //       File file = File(fullPath);
-
-  //       await file.writeAsBytes(bytes);
-  //       print(file.path);
-  //     } on PlatformException catch (error) {
-  //       print(error);
-  //     }
-  //   }
-  // }
-
   void initState() {
     super.initState();
     //print("entrando aqui primero");
@@ -168,7 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Column(
                         children: [
                           //SizedBox(height: 10),
-                          Text('AppVentas 3.4',
+                          Text('AppVentas 3.4.3',
                               style: Theme.of(context).textTheme.headline4),
                           SizedBox(height: 30),
                           ChangeNotifierProvider(
@@ -220,6 +200,10 @@ class __LoginForm2State extends State<_LoginForm2> {
 
   __LoginForm2State(this.connect, this.companies, this.lastCompany);
 
+  final MyConnectivity connect2 = MyConnectivity.instance;
+  Map _source2 = {ConnectivityResult.none: false};
+  bool _isInternet2 = false;
+
   late Company selectcompa = new Company();
   int valdefault_selectcompa = 0;
   Future getUsuarios(int company) async {
@@ -233,27 +217,24 @@ class __LoginForm2State extends State<_LoginForm2> {
     }
   }
 
-//  void initState() {
-//     super.initState();
+  void initState() {
+    super.initState();
 
-//        companies.forEach((element) {
-//                     if (element.codCompany.toString() == lastCompany. ) {
-//                       selectcompa = element;
-//                     }
-//                   });
-
-//   }
-
-//  @override
-//   void dispose() {
-//     // TODO: implement dispose
-//     super.dispose();
-//   }
+    connect2.initialise();
+    connect2.myStream.listen((source) {
+      if (mounted) {
+        setState(() => _source2 = source);
+      }
+    });
+  }
 
   SharedPreferencesTest sh = new SharedPreferencesTest();
   @override
   Widget build(BuildContext context) {
     final loginForm = Provider.of<AuthenticationProvider>(context);
+
+    _isInternet2 =
+        _source2.keys.toList()[0] == ConnectivityResult.none ? false : true;
 
     return Container(
       child: Form(
@@ -280,22 +261,38 @@ class __LoginForm2State extends State<_LoginForm2> {
                     child: Text(company.strDesCompany!),
                   );
                 }).toList(),
-                onChanged: (val) async {
-                  EasyLoading.show(status: 'Cargando...');
-                  loginForm.company = val.toString();
+                onChanged: !_isInternet2
+                    ? null
+                    : (val) async {
+                        print(">>> impresion de la conexion");
+                        print(_isInternet2);
 
-                  companies.forEach((element) {
-                    if (element.codCompany.toString() == val.toString()) {
-                      selectcompa = element;
-                    }
-                  });
+                        if (_isInternet2) {
+                          EasyLoading.show(status: 'Cargando...');
+                          loginForm.company = val.toString();
 
-                  await getUsuarios(
-                      int.parse(selectcompa.codCompany.toString()));
+                          companies.forEach((element) {
+                            if (element.codCompany.toString() ==
+                                val.toString()) {
+                              selectcompa = element;
+                            }
+                          });
 
-                  EasyLoading.dismiss();
-                  valdefault_selectcompa = 1;
-                },
+                          await getUsuarios(
+                              int.parse(selectcompa.codCompany.toString()));
+
+                          EasyLoading.dismiss();
+                          valdefault_selectcompa = 1;
+                        } else {
+                          print(">>> entramos aqui");
+                          final msg_no_internet = SnackBar(
+                              content: Text(
+                                  'No hay Internet para cambiar de Empresa !!'));
+
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(msg_no_internet);
+                        }
+                      },
               ),
               TextFormField(
                 inputFormatters: [
@@ -356,8 +353,9 @@ class __LoginForm2State extends State<_LoginForm2> {
                           final msg_success = SnackBar(
                               content:
                                   Text('Usuario logueado correctamente !!'));
-                          final msg_incorrect =
-                              SnackBar(content: Text('Usuario Invalido !!'));
+                          final msg_incorrect = SnackBar(
+                              content: Text(
+                                  'Credenciales incorrectas !! , intentelo de nuevo.'));
                           final msg_err = SnackBar(
                               content: Text(
                                   'Tuvimos un error en el registro !! , Intentelo de nuevo.'));
@@ -370,14 +368,13 @@ class __LoginForm2State extends State<_LoginForm2> {
                           await Future.delayed(Duration(seconds: 1));
                           /* Obtenemos los datos de la empresa seleccionada*/
 
-                          // print(valdefault_selectcompa);
-                          // print(lastCompany[0].company);
                           if (valdefault_selectcompa == 0) {
                             loginForm.company =
                                 lastCompany[0].company.toString();
                           }
 
-                          // print(loginForm.company.toString() + " <<<<");
+                          /* Obtenemos la información de la empresa para validar el logueo
+                             del usuario , se supone que ya hubo internet para descargar esta tabla */
 
                           late Company selectcompa = new Company();
                           companies.forEach((element) {
@@ -390,6 +387,7 @@ class __LoginForm2State extends State<_LoginForm2> {
                               }
                             }
                           });
+
                           /* validamos al usuario por logueo y empresa seleccionada*/
                           Authentication authResult =
                               await loginForm.searchUserStr(loginForm.email,
@@ -397,10 +395,15 @@ class __LoginForm2State extends State<_LoginForm2> {
 
                           final f = loginForm.formKey;
                           String msg = "";
+                          // print(">>> llegamos");
                           try {
                             if (authResult.codUser > 0) {
+                              /* Se logueo correctamente */
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(msg_success);
                               /*#### ACTUALIZAMOS EL LASTCOMPANY SI SE LOGUEA CON EXITO ####*/
-
+                              /* Se pudo loguear ya que la tabla empresas estaba descargada
+                              , por ende esta parte va a funcionar */
                               LastCompanyCrt crt = new LastCompanyCrt();
                               LastCompany lastcompany = new LastCompany(
                                   company: int.parse(
@@ -411,6 +414,8 @@ class __LoginForm2State extends State<_LoginForm2> {
                               /*#### ACTUALIZAMOS EL LASTCOMPANY SI SE LOGUEA CON EXITO ####*/
 
                               /*#### TRAEMOS LA IMAGEN DE LA EMPRESA QUE SELECCIONAMOS  ####*/
+                              /* Hacemos un try catch , para que recupera la imagen de la empresa 
+                              si es que puede, si es que se tiene de internet */
 
                               try {
                                 final ByteData byteData =
@@ -427,61 +432,90 @@ class __LoginForm2State extends State<_LoginForm2> {
                                 File file = File(fullPath);
 
                                 await file.writeAsBytes(bytes);
+                                // print(">>> entramos aqui3");
                                 // print(file.path);
 
-                              } on PlatformException catch (error) {
+                              } catch (error) {
+                                // print(">> salimos al catch");
                                 print(error);
                               }
 
                               /*#### TRAEMOS LA IMAGEN DE LA EMPRESA QUE SELECCIONAMOS  ####*/
 
-                              /* Se logueo correctamente */
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(msg_success);
-                              /* Obtenemos las reglas del usuario para la sesion actual */
-                              ApiConfigGeneral configgeneral =
-                                  new ApiConfigGeneral();
-                              configgeneral
-                                  .getConfigGeneraluser(authResult.codUser);
-                              /* Revisamos si es el mismo usuario el que se esta logueando en este celular, si es un distinto , se eliminan
-                               las tablas principales 
+                              TiPersonCtr c1 = new TiPersonCtr();
+                              TiPerson person = TiPerson();
 
-                            */
+                              if (_isInternet2) {
+                                /* Obtenemos las reglas del usuario para la sesion actual */
+                                ApiConfigGeneral configgeneral =
+                                    new ApiConfigGeneral();
 
-                              await configgeneral.cleanUpdatePrincipaltables(
-                                  authResult.codUser);
+                                configgeneral
+                                    .getConfigGeneraluser(authResult.codUser);
+                                /* tenemos conexion a bd por ello consultamos mediante api rest la regla.
+                                   del usuario a loguear */
+                                int validar = await configgeneral
+                                    .executionsGeneralUserRules(
+                                        authResult.codUser);
 
-                              int validar = await configgeneral
-                                  .executionsGeneralUserRules(
+                                if (validar == 0) {
+                                  loginForm.isLoading = false;
+                                  loginForm.email = '';
+                                  loginForm.password = '';
+                                  // f.currentState!.reset();
+                                  //loginForm.formKey.currentState.reset();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              "Usuario sin reglas !! , llamar a sistemas. ")));
+
+                                  return null;
+                                }
+
+                                // /* rules 1 : Al inicio del logeuo debe preguntar si le ordenan a limpiar su bd */
+                                // print("entrando rules clean");
+                                // ResponseError resp = await configgeneral
+                                //     .executionRuleCleanTables();
+
+                                /* Revisamos si es el mismo usuario el que se esta logueando en este celular, si es un distinto o es primer loguep , se eliminan
+                               las tablas principales y complementarias , y se carga informacion de quotation, billings y complementos  */
+
+                                ResponseError resp = ResponseError(
+                                    description: '', error: 0, success: 0);
+
+                                ResponseError resp1 = ResponseError(
+                                    description: '', error: 0, success: 0);
+
+                                int cargamos_tablas_principales =
+                                    await configgeneral
+                                        .cleanUpdatePrincipaltables(
+                                            authResult.codUser);
+
+                                if (cargamos_tablas_principales == 1) {
+                                  /* 1. Forzamos la carga de tablas complementarias */
+                                  resp = await configgeneral
+                                      .executionRuleLoadComplements(
+                                          authResult.codUser,
+                                          1,
+                                          authResult.codCompany.toString());
+
+                                  person = await c1.getdataPersonfromUser_V2(
                                       authResult.codUser);
 
-                              if (validar == 0) {
-                                loginForm.isLoading = false;
-                                f.currentState!.reset();
-                                //loginForm.formKey.currentState.reset();
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                    content: Text(
-                                        "Usuario sin reglas !!, llamar a sistemas. ")));
+                                  /* 2. sincronizamos las cotizaciones y recibos */
+                                  resp1 = await configgeneral
+                                      .executionRuleUploadSyncQuoBillLogueo(
+                                          authResult.codUser,
+                                          person.strPosition.toString(),
+                                          authResult.codCompany.toString());
+                                } else {
+                                  person = await c1.getdataPersonfromUser_V2(
+                                      authResult.codUser);
+                                }
 
-                                return null;
-                              }
-
-                              if (connect) {
-                                /* rules 1 : Al inicio del logeuo debe preguntar si le ordenan a limpiar su bd */
-                                print("entrando rules clean");
-                                ResponseError resp = await configgeneral
-                                    .executionRuleCleanTables();
-                                /* rules 2 : Aqui preguntamos si hay complementarios que necesitan ser cargados */
-                                print("entrando load complements");
-                                print(authResult.codUser.toString() +
-                                    " ------------- " +
-                                    authResult.codCompany.toString());
-                                ResponseError resp1 = await configgeneral
-                                    .executionRuleLoadComplements(
-                                        authResult.codUser,
-                                        0,
-                                        authResult.codCompany.toString());
-                                /* rules 2 : Cargamos datos del cliente y Galeria */
+                                /* 2. sincronizar los clientes y la galeria */
+                                /* Siempre que tengamos internet deberemos de intentar hacer sincronizacion
+                                     de nuevos clientes  , deberiamos de crear un proceso para detectar nuevos clientes */
 
                                 ResponseError resp2 = await configgeneral
                                     .executionRuleLoadClientsGallery(
@@ -491,23 +525,43 @@ class __LoginForm2State extends State<_LoginForm2> {
 
                                 msg = resp.description +
                                     "\n\n" +
-                                    resp2.description +
-                                    "\n\n" +
                                     resp1.description;
 
                                 ScaffoldMessenger.of(context)
                                     .showSnackBar(SnackBar(content: Text(msg)));
-                                //if (resp.success == 1) {}
+                              } else {
+                                /* Obtenemos las reglas del usuario para la sesion actual */
+                                ApiConfigGeneral configgeneral =
+                                    new ApiConfigGeneral();
+
+                                /* Traemos las regloas de la BD , si es primer logueo necesita esta
+                                regla , por ende si no la encuentra se cae o si intenta loguearse con otro 
+                                usuario  */
+
+                                int validar = await configgeneral
+                                    .executionsGeneralUserRules(
+                                        authResult.codUser);
+
+                                if (validar == 0) {
+                                  loginForm.isLoading = false;
+                                  f.currentState!.reset();
+                                  //loginForm.formKey.currentState.reset();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              "Usuario no tiene cargado reglas!! , necesita conectarse a internet. ")));
+
+                                  return null;
+                                }
+
+                                person = await c1.getdataPersonfromUser_V2(
+                                    authResult.codUser);
                               }
 
                               /* Despues del segundo las reglas generales ya debieron de haber sido ejecutadas*/
 
                               // print(authResult.strPosition.toString() +
                               //     " -----------------------------  ");
-
-                              TiPersonCtr c1 = new TiPersonCtr();
-                              TiPerson person = await c1
-                                  .getdataPersonfromUser_V2(authResult.codUser);
 
                               sh.setPosition(person.strPosition.toString());
                               sh.setcodUser(authResult.codUser);

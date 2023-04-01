@@ -1,5 +1,10 @@
 import 'dart:convert';
 
+import 'package:http/http.dart' as http;
+import 'package:sqflite/sqflite.dart';
+
+import 'package:appcotizaciones/src/config/variables.dart';
+import 'package:appcotizaciones/src/helpers/database_helper.dart';
 import 'package:appcotizaciones/src/models/complementsCustoGalle.dart';
 import 'package:appcotizaciones/src/models/customer.dart';
 import 'package:appcotizaciones/src/models/gallery.dart';
@@ -7,11 +12,6 @@ import 'package:appcotizaciones/src/models/galleryDetail.dart';
 import 'package:appcotizaciones/src/models/galleryDetailSubtipos.dart';
 import 'package:appcotizaciones/src/models/galleryExport.dart';
 import 'package:appcotizaciones/src/models/response_error.dart';
-import 'package:http/http.dart' as http;
-import 'package:sqflite/sqflite.dart';
-
-import 'package:appcotizaciones/src/config/variables.dart';
-import 'package:appcotizaciones/src/helpers/database_helper.dart';
 
 class ComplementsCustomerGalleries {
   DatabaseHelper con = new DatabaseHelper();
@@ -22,11 +22,12 @@ class ComplementsCustomerGalleries {
       DIR_URL + "Appstock/controller/services/insertarGalleries.php";
 
   Future<List<ComplementsCustoGalle>> uploadComplementsCustomerGalleries(
-      int codempresa) async {
+      int codempresa, int codUser) async {
     // ResponseError error =
     //     new ResponseError(description: "", error: 0, success: 0);
 
-    send_empresa reqe = new send_empresa(codEmpresa: codempresa);
+    send_empresa reqe =
+        new send_empresa(codEmpresa: codempresa, codUser: codUser);
     List data = [];
 
     try {
@@ -157,16 +158,20 @@ class ComplementsCustomerGalleries {
 
 class send_empresa {
   int codEmpresa;
+  int codUser;
 
   send_empresa({
     required this.codEmpresa,
+    required this.codUser,
   });
 
   send_empresa copyWith({
     int? codEmpresa,
+    int? codUser,
   }) {
     return send_empresa(
       codEmpresa: codEmpresa ?? this.codEmpresa,
+      codUser: codUser ?? this.codUser,
     );
   }
 
@@ -174,6 +179,7 @@ class send_empresa {
     final result = <String, dynamic>{};
 
     result.addAll({'codEmpresa': codEmpresa});
+    result.addAll({'codUser': codUser});
 
     return result;
   }
@@ -181,6 +187,7 @@ class send_empresa {
   factory send_empresa.fromMap(Map<String, dynamic> map) {
     return send_empresa(
       codEmpresa: map['codEmpresa']?.toInt() ?? 0,
+      codUser: map['codUser']?.toInt() ?? 0,
     );
   }
 
@@ -190,15 +197,18 @@ class send_empresa {
       send_empresa.fromMap(json.decode(source));
 
   @override
-  String toString() => 'send_empresa(codEmpresa: $codEmpresa)';
+  String toString() =>
+      'send_empresa(codEmpresa: $codEmpresa, codUser: $codUser)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is send_empresa && other.codEmpresa == codEmpresa;
+    return other is send_empresa &&
+        other.codEmpresa == codEmpresa &&
+        other.codUser == codUser;
   }
 
   @override
-  int get hashCode => codEmpresa.hashCode;
+  int get hashCode => codEmpresa.hashCode ^ codUser.hashCode;
 }

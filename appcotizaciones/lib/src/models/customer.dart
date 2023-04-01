@@ -17,6 +17,14 @@ class Customer {
   int? flagForceMultimedia;
   int? flagTipoMultimedia;
 
+  String? mensaje;
+  String? deudaTotal;
+  String? deudaVencida;
+  int? diasVencida;
+  String? fechaUltimaVenta;
+  String? condicionCredito;
+  int? flagMensajeInvasivo;
+
   String? selectid;
 
   Customer({
@@ -34,6 +42,13 @@ class Customer {
     this.longitude,
     this.flagForceMultimedia,
     this.flagTipoMultimedia,
+    this.mensaje,
+    this.deudaTotal,
+    this.deudaVencida,
+    this.diasVencida,
+    this.fechaUltimaVenta,
+    this.condicionCredito,
+    this.flagMensajeInvasivo,
   });
 
   Customer copyWith({
@@ -51,6 +66,13 @@ class Customer {
     String? longitude,
     int? flagForceMultimedia,
     int? flagTipoMultimedia,
+    String? mensaje,
+    String? deudaTotal,
+    String? deudaVencida,
+    int? diasVencida,
+    String? fechaUltimaVenta,
+    String? condicionCredito,
+    int? flagMensajeInvasivo,
   }) {
     return Customer(
       codCustomer: codCustomer ?? this.codCustomer,
@@ -67,6 +89,13 @@ class Customer {
       longitude: longitude ?? this.longitude,
       flagForceMultimedia: flagForceMultimedia ?? this.flagForceMultimedia,
       flagTipoMultimedia: flagTipoMultimedia ?? this.flagTipoMultimedia,
+      mensaje: mensaje ?? this.mensaje,
+      deudaTotal: deudaTotal ?? this.deudaTotal,
+      deudaVencida: deudaVencida ?? this.deudaVencida,
+      diasVencida: diasVencida ?? this.diasVencida,
+      fechaUltimaVenta: fechaUltimaVenta ?? this.fechaUltimaVenta,
+      condicionCredito: condicionCredito ?? this.condicionCredito,
+      flagMensajeInvasivo: flagMensajeInvasivo ?? this.flagMensajeInvasivo,
     );
   }
 
@@ -115,6 +144,27 @@ class Customer {
     if (flagTipoMultimedia != null) {
       result.addAll({'flagTipoMultimedia': flagTipoMultimedia});
     }
+    if (mensaje != null) {
+      result.addAll({'mensaje': mensaje});
+    }
+    if (deudaTotal != null) {
+      result.addAll({'deudaTotal': deudaTotal});
+    }
+    if (deudaVencida != null) {
+      result.addAll({'deudaVencida': deudaVencida});
+    }
+    if (diasVencida != null) {
+      result.addAll({'diasVencida': diasVencida});
+    }
+    if (fechaUltimaVenta != null) {
+      result.addAll({'fechaUltimaVenta': fechaUltimaVenta});
+    }
+    if (condicionCredito != null) {
+      result.addAll({'condicionCredito': condicionCredito});
+    }
+    if (flagMensajeInvasivo != null) {
+      result.addAll({'flagMensajeInvasivo': flagMensajeInvasivo});
+    }
 
     return result;
   }
@@ -135,6 +185,13 @@ class Customer {
       longitude: map['longitude'],
       flagForceMultimedia: map['flagForceMultimedia']?.toInt(),
       flagTipoMultimedia: map['flagTipoMultimedia']?.toInt(),
+      mensaje: map['mensaje'],
+      deudaTotal: map['deudaTotal'],
+      deudaVencida: map['deudaVencida'],
+      diasVencida: map['diasVencida']?.toInt(),
+      fechaUltimaVenta: map['fechaUltimaVenta'],
+      condicionCredito: map['condicionCredito'],
+      flagMensajeInvasivo: map['flagMensajeInvasivo']?.toInt(),
     );
   }
 
@@ -145,7 +202,7 @@ class Customer {
 
   @override
   String toString() {
-    return 'Customer(codCustomer: $codCustomer, numRucCustomer: $numRucCustomer, numRut: $numRut, strName: $strName, strCelphone: $strCelphone, strMail: $strMail, strAddress: $strAddress, codTiCustomer: $codTiCustomer, codCompany: $codCompany, asyncFlag: $asyncFlag, latitude: $latitude, longitude: $longitude, flagForceMultimedia: $flagForceMultimedia, flagTipoMultimedia: $flagTipoMultimedia)';
+    return 'Customer(codCustomer: $codCustomer, numRucCustomer: $numRucCustomer, numRut: $numRut, strName: $strName, strCelphone: $strCelphone, strMail: $strMail, strAddress: $strAddress, codTiCustomer: $codTiCustomer, codCompany: $codCompany, asyncFlag: $asyncFlag, latitude: $latitude, longitude: $longitude, flagForceMultimedia: $flagForceMultimedia, flagTipoMultimedia: $flagTipoMultimedia, mensaje: $mensaje, deudaTotal: $deudaTotal, deudaVencida: $deudaVencida, diasVencida: $diasVencida, fechaUltimaVenta: $fechaUltimaVenta, condicionCredito: $condicionCredito, flagMensajeInvasivo: $flagMensajeInvasivo)';
   }
 
   @override
@@ -166,7 +223,14 @@ class Customer {
         other.latitude == latitude &&
         other.longitude == longitude &&
         other.flagForceMultimedia == flagForceMultimedia &&
-        other.flagTipoMultimedia == flagTipoMultimedia;
+        other.flagTipoMultimedia == flagTipoMultimedia &&
+        other.mensaje == mensaje &&
+        other.deudaTotal == deudaTotal &&
+        other.deudaVencida == deudaVencida &&
+        other.diasVencida == diasVencida &&
+        other.fechaUltimaVenta == fechaUltimaVenta &&
+        other.condicionCredito == condicionCredito &&
+        other.flagMensajeInvasivo == flagMensajeInvasivo;
   }
 
   @override
@@ -184,6 +248,13 @@ class Customer {
         latitude.hashCode ^
         longitude.hashCode ^
         flagForceMultimedia.hashCode ^
-        flagTipoMultimedia.hashCode;
+        flagTipoMultimedia.hashCode ^
+        mensaje.hashCode ^
+        deudaTotal.hashCode ^
+        deudaVencida.hashCode ^
+        diasVencida.hashCode ^
+        fechaUltimaVenta.hashCode ^
+        condicionCredito.hashCode ^
+        flagMensajeInvasivo.hashCode;
   }
 }
