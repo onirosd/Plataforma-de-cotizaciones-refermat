@@ -88,7 +88,7 @@ class QuotationDB {
             'flg_State' => trim($quotation['state']) == '1' ? '2' : trim($quotation['state']),
             'cod_QuotationParents' => (String)$quotation['quotationParents'],
             'cod_Company' => (String)$quotation['company'],
-            'flg_update'  =>  (int) $quotation['updateflg'],
+            'flg_update'  =>  0,//(int) $quotation['updateflg'] == -1 ? 0 : , // las nuevas inserciones van con  el flag de actualizacion cero
             'latitude'  =>  (String) $quotation['latitude'],
             'longitude'  =>  (String) $quotation['longitude']
             

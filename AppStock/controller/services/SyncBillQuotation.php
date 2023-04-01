@@ -52,6 +52,7 @@ $codUser        = $decoded_params['codUser'];
 $bgn            = $decoded_params['bgn'];
 $end            = $decoded_params['end'];
 $position       = $decoded_params['position'];
+$company        = $decoded_params['cod_company'];
 $valposition    = rtrim(ltrim($position))  != 'VENDEDOR' ? 1 :0;
 
 
@@ -81,6 +82,7 @@ $sql_quotation = "
     convert(int,cod_Company) company,
     convert(int,flg_update) updateflg
     from quotation q where
+    q.cod_Company = '".$company."' and 
     ( q.dte_CreateDate between '".$bgn."' and '".$end."' )
 
 
@@ -117,6 +119,7 @@ $sql_quotation = "
    inner join quotation q on qp.cod_Quotation = q.cod_Quotation
    inner join Products p on qp.cod_Products = p.cod_Products
    where 
+   q.cod_Company = '".$company."' and 
    ( q.dte_CreateDate between '".$bgn."' and '".$end."' )
 
 
@@ -154,6 +157,7 @@ $sql_quotation = "
    0 flgCodRealSystem
    from billing a
    where 
+   a.cod_Company = '".$company."' and 
    ( convert(date, a.str_CreateDate) between '".$bgn."' and '".$end."' )
 
    ";

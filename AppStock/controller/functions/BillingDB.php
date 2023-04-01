@@ -77,7 +77,7 @@ class BillingDB {
             'strCreateUser' => (String)trim($billing['strCreateUser']),
             'dteCreateDate' => (String)trim($billing['dteCreateDate']),
             'codCompany' => (String)trim($billing['codCompany']),
-            'flgSync' => (int)$billing['flgSync'],
+            'flgSync'    => 0, //(int)$billing['flgSync'],
             'flgCodRealSystem' => (int)$billing['flgCodRealSystem'],
             'latitude' => (String)$billing['latitude'],
             'longitude' => (String)$billing['longitude']

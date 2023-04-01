@@ -40,6 +40,7 @@ if($code_error == 0){
 
 $decoded_params = (array) json_decode(json_decode($json_params));
 $empresa = (String) $decoded_params['codEmpresa'];
+$codUser = (String) $decoded_params['codUser'];
 
 // print_r($empresa);
 
@@ -65,7 +66,15 @@ if($constatus){
      latitude,
      longitude,
      flag_force_multimedia as flagForceMultimedia,
-     flag_tipo_multimedia as flagTipoMultimedia
+     flag_tipo_multimedia as flagTipoMultimedia,
+     Mensaje as mensaje,
+     DeudaTotal as deudaTotal,
+     DeudaVencida as deudaVencida,
+     DiasVencida as diasVencida,
+     FechaUltimaVenta as fechaUltimaVenta,
+     CondicionCredito as condicionCredito,
+     flag_mensaje_invasivo as flagMensajeInvasivo
+
      FROM CUSTOMER  
      where cod_Company = ".$empresa;
 
@@ -82,7 +91,7 @@ if($constatus){
      ,[flatEstado] flatEstado
       FROM [dbo].[Gallery] A
       INNER JOIN Customer B ON B.cod_Customer = A.codCustomer
-      WHERE B.cod_Company  = ".$empresa;
+      WHERE A.codUser = ".$codUser." and  B.cod_Company  = ".$empresa;
 
      $sql_gallery_detail = "
        
@@ -96,7 +105,7 @@ if($constatus){
       FROM [dbo].[GalleryDetail] a
       INNER JOIN  [dbo].[Gallery] b on a.codGallery = b.codGallery
       INNER JOIN Customer c on c.cod_Customer = b.codCustomer
-     where c.cod_Company = ".$empresa;
+     where b.codUser = ".$codUser." and c.cod_Company = ".$empresa;
 
      $sql_gallery_detail_subtipos = "
      SELECT 
@@ -108,7 +117,7 @@ if($constatus){
       FROM [dbo].[GalleryDetailSubtipos] a
       INNER JOIN  [dbo].[Gallery] b on a.codGallery = b.codGallery
       INNER JOIN Customer c on c.cod_Customer = b.codCustomer
-	  where c.cod_Company = ".$empresa;
+	  where b.codUser = ".$codUser." and c.cod_Company = ".$empresa;
 
 
      
@@ -141,6 +150,15 @@ if($constatus){
 
      $arr['flagForceMultimedia'] = (int)$row['flagForceMultimedia'];
      $arr['flagTipoMultimedia'] = (int)$row['flagTipoMultimedia'];
+
+     
+     $arr['Mensaje'] = (String)$row['Mensaje'];
+     $arr['DeudaTotal'] = (String)$row['DeudaTotal'];
+     $arr['DeudaVencida'] = (String)$row['DeudaVencida'];
+     $arr['DiasVencida'] = (int)$row['DiasVencida'];
+     $arr['FechaUltimaVenta'] = (String)$row['FechaUltimaVenta'];
+     $arr['CondicionCredito'] = (String)$row['CondicionCredito'];
+     $arr['flag_mensaje_invasivo'] = (int)$row['flag_mensaje_invasivo'];
 
     // $arr['PASS'] = $row['PASS'];
 

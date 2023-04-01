@@ -57,6 +57,7 @@ $sql_consult = "
 SELECT 
 a.cod_Products,
 concat(concat(convert(varchar(250) , a.cod_TiProducts) ,concat(concat(': '+rtrim(ltrim(a.str_NameProduct)),', Stock : '), convert(varchar(50),convert(decimal(18,2), b.num_stock))))+', Precio+IGV : ', convert(varchar(50), convert(decimal(18,2),  convert(decimal(18,2),b.num_priceMax) + (convert(decimal(18,2),b.num_priceMax) * convert(decimal(18,2), com.num_impuesto))) )    ) as str_NameProduct,
+
 a.str_NameProduct as str_NameProductReal,
 a.num_Unit,
 a.num_Diameter,
@@ -90,6 +91,7 @@ WHERE  b.cod_List = ".$lista." and li.cod_company = ".$company."
 ";
 
 
+//concat(concat(convert(varchar(250) , a.cod_TiProducts) ,concat(concat(': '+rtrim(ltrim(a.str_NameProduct)),', Stock : '), convert(varchar(50),convert(decimal(18,2), b.num_stock))))+', Precio+IGV : ', convert(varchar(50), convert(decimal(18,2),  convert(decimal(18,2),b.num_priceMax) + (convert(decimal(18,2),b.num_priceMax) * convert(decimal(18,2), com.num_impuesto))) )    ) as str_NameProduct,
 
 
 foreach ($conn->query($sql_consult) as $row) {
