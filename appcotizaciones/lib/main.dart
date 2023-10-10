@@ -3,6 +3,7 @@
 //import 'package:appcotizaciones/src/pages/main_page.dart';
 //import 'package:appcotizaciones/src/providers/bottom_navigation.text';
 //import 'package:appcotizaciones/src/preferences/MyPreferences.dart';
+// vemore que as
 
 import 'package:appcotizaciones/src/preferences/sharedpreferencestest.dart';
 import 'package:appcotizaciones/src/providers/changes.notifier.dart';
