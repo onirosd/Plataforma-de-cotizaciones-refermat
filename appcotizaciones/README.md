@@ -54,3 +54,24 @@ updateflg != -1
 lgSync != -1
 
 estos registros hacen referencia a que estan pendientes de sincronizar
+
+
+* version de android
+">=2.12.0 <3.0.0"
+
+### Configuracion para desarrollo de apk  appcotizaciones ###
+
+flutter 3.0.0
+java 8
+
+app/buildgradle
+
+compileSdkVersion 31
+minSdkVersion 19
+targetSdkVersion 31
+
+android/buildgradle
+classpath 'com.android.tools.build:gradle:7.3.0'
+
+wrapper/gradle-wrapper.properties
+distributionUrl=https\://services.gradle.org/distributions/gradle-7.5-all.zip

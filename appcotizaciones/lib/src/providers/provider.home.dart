@@ -329,7 +329,7 @@ class _ProviderHome extends State<ProviderHome> {
                             ),
                             SizedBox(height: 5),
                             Container(
-                              color: Colors.amber,
+                              color: Colors.blue[500],
                               height: 30,
                               child: Row(
                                 children: [
